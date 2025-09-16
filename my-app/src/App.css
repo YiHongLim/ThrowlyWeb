@@ -1,38 +1,278 @@
-.App {
-  text-align: center;
+:root{
+  --bg: #fdbfc2;
+  --card-bg: #ffffff;
+  --pink: #ff6f73;
+  --google-blue: #4285f4;
+  --black: #1a202c;
+  --muted: #64748b;
+  --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --btn-height: 56px;
+  --border-radius: 16px;
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+/* Root */
+.auth-root{
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  background: var(--bg);
+  padding: 24px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.auth-root::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+}
+
+/* Card */
+.auth-card{
+  width: 100%;
+  max-width: 400px;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 48px 32px;
+  box-shadow: var(--card-shadow);
+  text-align: center;
+  position: relative;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Header */
+.auth-logo{
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin: 0 auto 24px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.auth-title{
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--black);
+  letter-spacing: -0.025em;
+}
+
+.auth-tagline{
+  margin: 0 0 32px;
+  font-size: 15px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* Email form styles */
+.email-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.email-input,
+.password-input {
+  height: var(--btn-height);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0 20px;
+  font-size: 15px;
+  font-weight: 500;
+  background: #f8fafc;
+  color: var(--black);
+  transition: var(--transition);
+  box-sizing: border-box;
+}
+
+.email-input:focus,
+.password-input:focus {
+  outline: none;
+  border-color: var(--pink);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(255, 111, 115, 0.1);
+  transform: translateY(-1px);
+}
+
+.email-input::placeholder,
+.password-input::placeholder {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+/* Actions / Buttons */
+.auth-actions{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: var(--btn-height);
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 0 24px;
+  border: 0;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+/* individual colors */
+.btn-pink{
+  background: linear-gradient(135deg, var(--pink), #ff4757);
   color: white;
+  box-shadow: 0 4px 15px rgba(255, 111, 115, 0.4);
 }
 
-.App-link {
-  color: #61dafb;
+.btn-google{
+  background: linear-gradient(135deg, var(--google-blue), #3367d6);
+  color: white;
+  box-shadow: 0 4px 15px rgba(66, 133, 244, 0.4);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.btn-apple{
+  background: linear-gradient(135deg, #1a1a1a, #000000);
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* icon container */
+.btn-icon{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+/* hover / active */
+.btn:hover{ 
+  transform: translateY(-2px); 
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active{ 
+  transform: translateY(0); 
+}
+
+/* Divider */
+.divider{
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.divider .line{
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+}
+
+.divider .or{
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0 8px;
+}
+
+/* Sign up prompt */
+.signup-prompt{
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 24px;
+  font-weight: 400;
+}
+
+.signup-link{
+  background: none;
+  border: none;
+  color: var(--pink);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 4px;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.signup-link:hover {
+  text-decoration: underline;
+  color: #ff4757;
+}
+
+/* Responsive tweaks */
+@media (max-width: 480px){
+  .auth-root { 
+    padding: 16px; 
   }
-  to {
-    transform: rotate(360deg);
+  
+  .auth-card{ 
+    padding: 32px 24px; 
+    border-radius: 12px; 
   }
+  
+  .auth-title{ 
+    font-size: 24px; 
+  }
+  
+  .btn{ 
+    height: 52px; 
+    font-size: 14px; 
+  }
+  
+  .email-input,
+  .password-input {
+    height: 52px;
+    font-size: 14px;
+  }
+}
+
+/* Loading animation */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.btn.loading::before {
+  animation: shimmer 1.5s infinite;
+}
+
+/* Focus visible for accessibility */
+.btn:focus-visible,
+.email-input:focus-visible,
+.password-input:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
 }
