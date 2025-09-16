@@ -24,7 +24,7 @@ export function ProductCard({ product }: ProductCardProps) {
           <img
             src={product.image}
             alt={product.title}
-            className="w-full h-50 object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-105"
           />
           <div className="absolute top-3 left-3 flex gap-2">
             <Tag color="blue">{product.category}</Tag>
@@ -35,12 +35,12 @@ export function ProductCard({ product }: ProductCardProps) {
     >
       <Card.Meta
         title={
-          <h3 className="font-semibold text-lg line-clamp-2 group-hover:text-blue-600 transition-colors">
+          <h3 className="font-semibold text-md line-clamp-2 group-hover:text-blue-600 transition-colors">
             {product.title}
           </h3>
         }
         description={
-          <div className="text-2xl font-bold text-blue-600">
+          <div className="text-lg font-bold text-blue-600">
             ${product.price}
           </div>
         }

@@ -3,10 +3,13 @@ import {
   ProductCard,
   type Product,
 } from "../../components/listing/ProductCard";
-import { ProductFilters } from "../../components/listing/ProductFilter";
 
 import reactLogo from "../../assets/logo192.png";
+import { Layout } from "antd";
+import { ProductSidebar } from "../../components/listing/ProductSideBar";
+import { Breadcrumb } from "antd";
 
+const { Sider, Content } = Layout;
 const sampleProducts: Product[] = [
   {
     id: "1",
@@ -57,48 +60,74 @@ const sampleProducts: Product[] = [
 export function ProductListing() {
   const [products] = useState<Product[]>(sampleProducts);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [priceSort, setPriceSort] = useState<string>("");
 
   // Filter products by search query
-  const filteredProducts = products.filter(
-    (product) =>
+  let filteredProducts = products.filter((product) => {
+    // Search filter
+    const matchesSearch =
       product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+      product.category.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // Category filter
+    const matchesCategory =
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(product.category);
+
+    return matchesSearch && matchesCategory;
+  });
+
+  // Sort products by price
+  if (priceSort === "low-to-high") {
+    filteredProducts = filteredProducts.sort((a, b) => a.price - b.price);
+  } else if (priceSort === "high-to-low") {
+    filteredProducts = filteredProducts.sort((a, b) => b.price - a.price);
+  }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Listings
-          </h1>
-          <p className="text-lg text-gray-600">
-            Search and browse our listings
-          </p>
+    <div>
+      <Layout style={{ padding: "12px 24px", backgroundColor: "white" }}>
+        <div>
+          <Sider width={280} style={{borderRight: '1px solid #f0f0f0', marginRight: '24px'}}>
+            <ProductSidebar
+              selectedCategories={selectedCategories}
+              onCategoryChange={setSelectedCategories}
+              priceSort={priceSort}
+              onPriceSortChange={setPriceSort}
+            />
+          </Sider>
         </div>
-
-        <ProductFilters
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-        />
-
-        <div className="mt-8">
-          {filteredProducts.length === 0 ? (
-            <div className="text-center py-12">
-              <h3 className="text-xl font-semibold text-gray-500 mb-2">
-                No items found
-              </h3>
-              <p className="text-gray-400">Try a different search term</p>
+        <Content className="bg-white">
+          <div className="mx-auto px-4 py-8">
+            <div className="mb-8">
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                Listings
+              </h1>
+              <p className="text-lg text-gray-600">
+                Search and browse our listings
+              </p>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+
+            <div className="mt-8">
+              {filteredProducts.length === 0 ? (
+                <div className="text-center py-12">
+                  <h3 className="text-xl font-semibold text-gray-500 mb-2">
+                    No items found
+                  </h3>
+                  <p className="text-gray-400">Try a different search term</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {filteredProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </div>
-    </main>
+          </div>
+        </Content>
+      </Layout>
+    </div>
   );
 }
