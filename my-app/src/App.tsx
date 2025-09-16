@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import './App.css';
+import './output.css';
 import AuthPage from './pages/authpage';
 import EmailSignIn from './pages/EmailSignIn';
 import GoogleSignIn from './pages/GoogleSignIn';
