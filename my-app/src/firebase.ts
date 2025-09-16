@@ -31,3 +31,5 @@ export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
 export const storageRef = getStorage(app);
+
+export const auth = getAuth(app);
