@@ -33,7 +33,8 @@ const NavBar: React.FC = () => {
           <Box display="flex" alignItems="center" gap={3}>
             <Button color="inherit">Shop Local</Button>
             <Button color="inherit">Categories</Button>
-            <Button color="inherit">Overview</Button>
+          <Button color="inherit" href={"/campaign-page"}>Go Furnish Me</Button>
+          <Button color="inherit">Overview</Button>
             <Button color="inherit">About Throwly</Button>
           </Box>
 
