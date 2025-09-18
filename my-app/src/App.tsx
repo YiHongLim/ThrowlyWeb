@@ -7,18 +7,19 @@ import './App.css';
 import CampaignPage from './pages/Go_Furnish_Me/CampaignPage';
 import GoFurnishMePage from "./pages/Go_Furnish_Me/GoFurnishMePage";
 import CampaignPageDetails from "./pages/Go_Furnish_Me/CampaignPageDetails";
+import Home from './pages/Home/Home';
 
 function App() {
   return (
     <Router>
         <Routes>
-            <Route path="/" element={<CampaignPage />} />
+            <Route path="/" element={<Home />} />
             <Route path="/go-furnish-me" element={<GoFurnishMePage />} />
             <Route path="/campaign-page-details" element={<CampaignPageDetails />} />
+            <Route path="/" element={<CampaignPage />} />
         </Routes>
     </Router>
   );
-
 }
 
 export default App;
