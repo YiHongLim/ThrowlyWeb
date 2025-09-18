@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { auth } from "../firebase";
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, OAuthProvider } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, OAuthProvider } from "firebase/auth";
 
 const GoogleIcon = () => (
   <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden focusable="false">
@@ -21,51 +21,57 @@ const Shine = () => (
   <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
 );
 
-const AuthPage: React.FC = () => {
+const SignUpPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const handleEmailSignIn = async () => {
+  const handleEmailSignUp = async () => {
+    if (password !== confirmPassword) {
+      setError("Passwords don't match");
+      return;
+    }
+    
     try {
       setLoading(true);
       setError("");
       setSuccess("");
-      await signInWithEmailAndPassword(auth, email, password);
-      setSuccess("Successfully signed in! Redirecting...");
+      await createUserWithEmailAndPassword(auth, email, password);
+      setSuccess("Account created successfully! Redirecting...");
     } catch (e: any) {
-      setError("Wrong email/password");
+      setError("Unable to create account. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignUp = async () => {
     try {
       setLoading(true);
       setError("");
       setSuccess("");
       await signInWithPopup(auth, new GoogleAuthProvider());
-      setSuccess("Successfully signed in with Google! Redirecting...");
+      setSuccess("Successfully signed up with Google! Redirecting...");
     } catch (e: any) {
-      setError("Unable to sign in with Google. Please try again.");
+      setError("Unable to sign up with Google. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAppleSignIn = async () => {
+  const handleAppleSignUp = async () => {
     try {
       setLoading(true);
       setError("");
       setSuccess("");
       const provider = new OAuthProvider('apple.com');
       await signInWithPopup(auth, provider);
-      setSuccess("Successfully signed in with Apple! Redirecting...");
+      setSuccess("Successfully signed up with Apple! Redirecting...");
     } catch (e: any) {
-      setError("Unable to sign in with Apple. Please try again.");
+      setError("Unable to sign up with Apple. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -94,22 +100,23 @@ const AuthPage: React.FC = () => {
           <div className="flex flex-col gap-4 mb-1">
             <input type="email" placeholder="Email address" aria-label="Email address" value={email} onChange={e => setEmail(e.target.value)} className="h-14 rounded-xl border-2 border-[#e2e8f0] bg-[#f8fafc] px-5 text-[15px] font-medium text-[#1a202c] outline-none transition focus:bg-white focus:border-[#ff6f73] focus:ring-4 focus:ring-[rgba(255,111,115,0.1)]" />
             <input type="password" placeholder="Password" aria-label="Password" value={password} onChange={e => setPassword(e.target.value)} className="h-14 rounded-xl border-2 border-[#e2e8f0] bg-[#f8fafc] px-5 text-[15px] font-medium text-[#1a202c] outline-none transition focus:bg-white focus:border-[#ff6f73] focus:ring-4 focus:ring-[rgba(255,111,115,0.1)]" />
-            <button onClick={handleEmailSignIn} disabled={loading} className="relative group overflow-hidden h-14 rounded-xl bg-gradient-to-br from-[#ff6f73] to-[#ff4757] text-white text-[15px] font-semibold shadow-[0_4px_15px_rgba(255,111,115,0.4)] transition hover:shadow-[0_12px_30px_rgba(255,71,87,0.45)] hover:scale-[1.02] active:scale-100 disabled:opacity-60 disabled:cursor-not-allowed">
+            <input type="password" placeholder="Confirm Password" aria-label="Confirm Password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="h-14 rounded-xl border-2 border-[#e2e8f0] bg-[#f8fafc] px-5 text-[15px] font-medium text-[#1a202c] outline-none transition focus:bg-white focus:border-[#ff6f73] focus:ring-4 focus:ring-[rgba(255,111,115,0.1)]" />
+            <button onClick={handleEmailSignUp} disabled={loading} className="relative group overflow-hidden h-14 rounded-xl bg-gradient-to-br from-[#ff6f73] to-[#ff4757] text-white text-[15px] font-semibold shadow-[0_4px_15px_rgba(255,111,115,0.4)] transition hover:shadow-[0_12px_30px_rgba(255,71,87,0.45)] hover:scale-[1.02] active:scale-100 disabled:opacity-60 disabled:cursor-not-allowed">
               <Shine />
-              {loading ? 'Signing in…' : 'Sign In'}
+              {loading ? 'Creating account…' : 'Sign Up'}
             </button>
           </div>
 
-          <button onClick={handleGoogleSignIn} disabled={loading} className="relative group overflow-hidden h-14 rounded-xl bg-gradient-to-br from-[#4285f4] to-[#3367d6] text-white text-[15px] font-semibold shadow-[0_4px_15px_rgba(66,133,244,0.4)] transition hover:shadow-[0_12px_30px_rgba(66,133,244,0.45)] hover:scale-[1.02] active:scale-100 inline-flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed">
+          <button onClick={handleGoogleSignUp} disabled={loading} className="relative group overflow-hidden h-14 rounded-xl bg-gradient-to-br from-[#4285f4] to-[#3367d6] text-white text-[15px] font-semibold shadow-[0_4px_15px_rgba(66,133,244,0.4)] transition hover:shadow-[0_12px_30px_rgba(66,133,244,0.45)] hover:scale-[1.02] active:scale-100 inline-flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed">
             <Shine />
             <span className="inline-flex items-center justify-center w-5 h-5"><GoogleIcon /></span>
-            <span>Sign in with Google</span>
+            <span>Sign up with Google</span>
           </button>
 
-          <button onClick={handleAppleSignIn} disabled={loading} className="relative group overflow-hidden h-14 rounded-xl bg-black text-white text-[15px] font-semibold shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition hover:shadow-[0_12px_30px_rgba(0,0,0,0.45)] hover:scale-[1.02] active:scale-100 inline-flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed">
+          <button onClick={handleAppleSignUp} disabled={loading} className="relative group overflow-hidden h-14 rounded-xl bg-black text-white text-[15px] font-semibold shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition hover:shadow-[0_12px_30px_rgba(0,0,0,0.45)] hover:scale-[1.02] active:scale-100 inline-flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed">
             <Shine />
             <span className="inline-flex items-center justify-center w-5 h-5"><AppleIcon /></span>
-            <span>Sign in with Apple</span>
+            <span>Sign up with Apple</span>
           </button>
         </div>
 
@@ -120,12 +127,12 @@ const AuthPage: React.FC = () => {
         </div>
 
         <p className="text-[14px] text-[#64748b] mt-2">
-          Don't have an account?
-          <a href="/signup" className="ml-1 font-semibold text-[#ff6f73] hover:underline">Sign Up</a>
+          Already have an account?
+          <a href="/login" className="ml-1 font-semibold text-[#ff6f73] hover:underline">Sign In</a>
         </p>
       </div>
     </div>
   );
 };
 
-export default AuthPage;
+export default SignUpPage;

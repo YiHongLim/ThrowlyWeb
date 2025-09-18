@@ -2,15 +2,17 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './output.css';
 import AuthPage from './pages/authpage';
-import GoogleSignIn from './pages/GoogleSignIn';
-import AppleSignIn from './pages/AppleSignIn';
+import SignUpPage from './pages/SignUpPage';
+import CartPage from './pages/CartPage';
+
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<AuthPage />} />
-      <Route path="/signin/google" element={<GoogleSignIn />} />
-      <Route path="/signin/apple" element={<AppleSignIn />} />
+      <Route path="/login" element={<AuthPage />} />
+      <Route path="/signup" element={<SignUpPage />} />
+      <Route path="/cart" element={<CartPage />} />
     </Routes>
   );
 }
