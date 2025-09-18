@@ -1,6 +1,6 @@
 import React from 'react';
-import CampaignHero from '../../components/CampaignHero';
-import CampaignCardsGrid from "../../components/CampaignCardsGrid";
+import CampaignHero from '../../components/go_furnish_me/CampaignHero';
+import CampaignCardsGrid from "../../components/go_furnish_me/CampaignCardsGrid";
 import {useNavigate} from "react-router";
 import {Divider} from "antd";
 
