@@ -1,105 +1,90 @@
 import React from "react";
+import { Layout, Menu, Button, Input, Row, Col, Typography } from "antd";
 import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Box,
-  Paper,
-  InputBase,
-  Container
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+  SearchOutlined,
+} from "@ant-design/icons";
+
+const { Header } = Layout;
+const { Title } = Typography;
 
 const NavBar: React.FC = () => {
   return (
-    <div>
+    <>
       {/* --- Top Navigation Bar --- */}
-      <AppBar position="static" color="inherit" elevation={0}>
-        <Toolbar style={{ justifyContent: "space-between" }}>
-          {/* Left: Logo */}
-          <Box display="flex" alignItems="center" gap={2}>
-            <img
-              src="/converted_image.png"
-              alt="Throwly Logo"
-              style={{ height: "32px" }}
-            />
-            <Typography variant="h6" fontWeight="bold">
-              Throwly
-            </Typography>
-          </Box>
-
-          {/* Center: Nav Links */}
-          <Box display="flex" alignItems="center" gap={3}>
-            <Button color="inherit">Shop Local</Button>
-            <Button color="inherit">Categories</Button>
-            <Button color="inherit">Overview</Button>
-            <Button color="inherit">About Throwly</Button>
-          </Box>
-
-          {/* Right: Auth Buttons */}
-          <Box display="flex" alignItems="center" gap={2}>
-            <Button color="inherit">Sign In</Button>
-            <Button
-              variant="contained"
-              style={{ backgroundColor: "#ff6b00", color: "#fff" }}
-            >
-              Post
-            </Button>
-          </Box>
-        </Toolbar>
-      </AppBar>
-
-      {/* --- Search Bar Below Navbar --- */}
-      <Box
+      <Header
         style={{
+          backgroundColor: "#fff",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "0 40px",
           borderBottom: "1px solid #eee",
-          padding: "16px 0",
-          backgroundColor: "#fff"
         }}
       >
-        <Container
-          maxWidth="lg"
-          style={{ display: "flex", alignItems: "center", gap: "16px" }}
+        {/* Left: Logo */}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <img
+            src="/converted_image.png"
+            alt="Throwly Logo"
+            style={{ height: "32px" }}
+          />
+          <Title level={4} style={{ margin: 0 }}>
+            Throwly
+          </Title>
+        </div>
+
+        {/* Center: Nav Links */}
+        <Menu
+          mode="horizontal"
+          defaultSelectedKeys={[]}
+          style={{ flex: 1, justifyContent: "center", borderBottom: "none" }}
         >
-          {/* Location Dropdown */}
-          <Button
-            variant="outlined"
-            style={{ borderRadius: "20px", textTransform: "none" }}
-          >
-            Story County ▼
+          <Menu.Item key="shop">Shop Local</Menu.Item>
+          <Menu.Item key="categories">Categories</Menu.Item>
+          <Menu.Item key="overview">Overview</Menu.Item>
+          <Menu.Item key="about">About Throwly</Menu.Item>
+        </Menu>
+
+        {/* Right: Auth Buttons */}
+        <div style={{ display: "flex", gap: "12px" }}>
+          <Button type="link">Sign In</Button>
+          <Button type="primary" style={{ backgroundColor: "#ff6b00", border: "none" }}>
+            Post
           </Button>
+        </div>
+      </Header>
+
+      {/* --- Search Bar --- */}
+      <div
+        style={{
+          borderBottom: "1px solid #eee",
+          padding: "16px 40px",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Row gutter={16} align="middle">
+          {/* Location Dropdown (placeholder) */}
+          <Col flex="200px">
+            <Button block>Story County ▼</Button>
+          </Col>
 
           {/* Search Input */}
-          <Paper
-            component="form"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              flex: 1,
-              padding: "2px 8px",
-              border: "1px solid #ddd"
-            }}
-          >
-            <InputBase
+          <Col flex="auto">
+            <Input
               placeholder="What are you looking for?"
-              inputProps={{ "aria-label": "search" }}
-              style={{ flex: 1 }}
+              suffix={<SearchOutlined />}
+              style={{ borderRadius: "6px" }}
             />
-            <SearchIcon />
-          </Paper>
-        </Container>
+          </Col>
+        </Row>
 
-        {/* Popular Keywords Row */}
-        <Container
-          maxWidth="lg"
+        {/* Popular Keywords */}
+        <Row
           style={{
             marginTop: "8px",
-            display: "flex",
             gap: "16px",
-            flexWrap: "wrap",
             fontSize: "14px",
-            color: "#555"
+            color: "#555",
           }}
         >
           {[
@@ -119,15 +104,15 @@ const NavBar: React.FC = () => {
             "tv",
             "couch",
             "free",
-            "desk"
+            "desk",
           ].map((word) => (
             <span key={word} style={{ cursor: "pointer" }}>
               {word}
             </span>
           ))}
-        </Container>
-      </Box>
-    </div>
+        </Row>
+      </div>
+    </>
   );
 };
 
