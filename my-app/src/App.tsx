@@ -1,9 +1,15 @@
-import "./output.css";
+import React from 'react';
+import logo from './logo.svg';
+import './App.css';
+import Home from './pages/Home/Home';
 
 function App() {
   return (
-    <div className="container mx-auto p-4 ">
-      <h1 className="text-3xl font-bold">Hello world!</h1>
+    <div className="App">
+      <header className="App-header">
+      
+      <Home />
+      </header>
     </div>
   );
 }
