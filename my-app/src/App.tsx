@@ -15,6 +15,8 @@ function App() {
             <Route path="/" element={<CampaignPage />} />
             <Route path="/go-furnish-me" element={<GoFurnishMePage />} />
             <Route path="/campaign-page-details" element={<CampaignPageDetails />} />
+            <Route path="/campaign-page" element={<CampaignPage />} />
+            <Route path="/campaign-page" element={<CampaignPage />} />
         </Routes>
     </Router>
   );
