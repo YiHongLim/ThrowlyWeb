@@ -7,7 +7,7 @@ import {
 import reactLogo from "../../assets/logo192.png";
 import { Layout } from "antd";
 import { ProductSidebar } from "../../components/listing/ProductSideBar";
-import { Breadcrumb } from "antd";
+import { Breadcrumb, Button } from "antd";
 
 const { Sider, Content } = Layout;
 const sampleProducts: Product[] = [
@@ -89,7 +89,10 @@ export function ProductListing() {
     <div>
       <Layout style={{ padding: "12px 24px", backgroundColor: "white" }}>
         <div>
-          <Sider width={280} style={{borderRight: '1px solid #f0f0f0', marginRight: '24px'}}>
+          <Sider
+            width={280}
+            style={{ borderRight: "1px solid #f0f0f0", marginRight: "24px" }}
+          >
             <ProductSidebar
               selectedCategories={selectedCategories}
               onCategoryChange={setSelectedCategories}
@@ -98,7 +101,7 @@ export function ProductListing() {
             />
           </Sider>
         </div>
-        <Content className="bg-white">
+        <Content>
           <div className="mx-auto px-4 py-8">
             <div className="mb-8">
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -108,22 +111,27 @@ export function ProductListing() {
                 Search and browse our listings
               </p>
             </div>
+            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "16px", width: "100%" }}>
+              <Button style={{ marginRight: "8px" }} type="primary">Add Listing</Button>
+            </div>
 
-            <div className="mt-8">
-              {filteredProducts.length === 0 ? (
-                <div className="text-center py-12">
-                  <h3 className="text-xl font-semibold text-gray-500 mb-2">
-                    No items found
-                  </h3>
-                  <p className="text-gray-400">Try a different search term</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {filteredProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
-              )}
+            <div>
+              <div className="mt-8">
+                {filteredProducts.length === 0 ? (
+                  <div className="text-center py-12">
+                    <h3 className="text-xl font-semibold text-gray-500 mb-2">
+                      No items found
+                    </h3>
+                    <p className="text-gray-400">Try a different search term</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {filteredProducts.map((product) => (
+                      <ProductCard key={product.id} product={product} />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </Content>

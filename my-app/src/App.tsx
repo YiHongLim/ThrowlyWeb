@@ -5,13 +5,6 @@ import { Routes, Route } from "react-router-dom";
 // @ts-ignore
 import logo from './logo.svg';
 import './output.css';
-import CampaignPage from './pages/Go_Furnish_Me/CampaignPage';
-import GoFurnishMePage from "./pages/Go_Furnish_Me/GoFurnishMePage";
-import CampaignPageDetails from "./pages/Go_Furnish_Me/CampaignPageDetails";
-import Home from './pages/Home/Home';
-import AuthPage from './pages/authpage';
-import SignUpPage from './pages/SignUpPage';
-import CartPage from './pages/CartPage';
 
 function App() {
   return (
@@ -23,7 +16,9 @@ function App() {
         <Route path="/login" element={<AuthPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/cart" element={<CartPage />} />
-    </Routes>
+        <Route path="/listing" element={<ProductListing />} />
+        <Route path="/listing/:id" element={<ProductDetail />} />
+            </Routes>
 
   );
 }
