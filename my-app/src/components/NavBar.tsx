@@ -10,8 +10,12 @@ import {
   Container
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import { useNavigate } from "react-router-dom";
+
 
 const NavBar: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div>
       {/* --- Top Navigation Bar --- */}
@@ -40,7 +44,7 @@ const NavBar: React.FC = () => {
 
           {/* Right: Auth Buttons */}
           <Box display="flex" alignItems="center" gap={2}>
-            <Button color="inherit">Sign In</Button>
+            <Button color="inherit" onClick={() => navigate('/login')}>Sign In</Button>
             <Button
               variant="contained"
               style={{ backgroundColor: "#ff6b00", color: "#fff" }}
