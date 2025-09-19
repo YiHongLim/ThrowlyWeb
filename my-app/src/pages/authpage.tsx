@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, OAuthProvider } from "firebase/auth";
-import NavBar from "../components/NavBar";
+import NavBar from "../components/home/NavBar";
 
 const GoogleIcon = () => (
   <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden focusable="false">
