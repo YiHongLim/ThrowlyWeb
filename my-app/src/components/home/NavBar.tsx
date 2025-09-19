@@ -44,6 +44,9 @@ const NavBar: React.FC = () => {
         </Menu.Item>
         <Menu.Item key="overview">Overview</Menu.Item>
         <Menu.Item key="about">About Throwly</Menu.Item>
+        <Menu.Item key="cart">
+          <a href="/cart">Cart</a>
+        </Menu.Item>
       </Menu>
 
       {/* Right Auth Buttons */}

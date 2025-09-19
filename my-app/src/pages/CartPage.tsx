@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import NavBar from "../components/home/NavBar";
 
 
 type CartItem = {
@@ -105,7 +105,7 @@ const CartPage: React.FC = () => {
       `}</style>
 
 
-
+    <NavBar />
       <div className="container">
         <div className="header">My Cart</div>
 
@@ -176,15 +176,6 @@ const CartPage: React.FC = () => {
               <div>
                 <div style={{ fontSize: 13, color: "#6b7280" }}>Subtotal ({items.length} items)</div>
                 <div style={{ fontSize: 18, fontWeight: 700 }}>${total.toFixed(2)}</div>
-              </div>
-              <div style={{ display: "flex", gap: 10 }}>
-                <button
-                  onClick={() => alert("Save for later (implement)")}
-                  style={{ padding: "8px 12px", borderRadius: 8, background: "#fff", border: "1px solid #e5e7eb", cursor: "pointer" }}
-                >
-                  Save for later
-                </button>
-                
               </div>
             </div>
           </>
