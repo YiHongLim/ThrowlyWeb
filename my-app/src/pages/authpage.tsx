@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, OAuthProvider } from "firebase/auth";
+import NavBar from "../components/NavBar";
 
 const GoogleIcon = () => (
   <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden focusable="false">
@@ -72,57 +73,60 @@ const AuthPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#fdbfc2] p-6 relative">
-      <div className="w-full max-w-[400px] bg-white rounded-2xl p-12 text-center shadow-[0_20px_25px_-5px_rgba(0,0,0,.1),_0_10px_10px_-5px_rgba(0,0,0,.04)] border border-white/20">
-        <header className="mb-8">
-          <img src="https://firebasestorage.googleapis.com/v0/b/gutter-bc42f.appspot.com/o/Black%20logo%20-%20no%20background.png?alt=media&token=91786a19-154b-4324-8414-a7154a9840d2" alt="Logo" className="w-24 h-24 mx-auto mb-8" />
-        </header>
+    <div className="min-h-screen bg-[#fdbfc2]">
+      <NavBar />
+      <div className="flex items-center justify-center p-6 relative">
+        <div className="w-full max-w-[400px] bg-white rounded-2xl p-12 text-center shadow-[0_20px_25px_-5px_rgba(0,0,0,.1),_0_10px_10px_-5px_rgba(0,0,0,.04)] border border-white/20">
+          <header className="mb-8">
+            <img src="https://firebasestorage.googleapis.com/v0/b/gutter-bc42f.appspot.com/o/Black%20logo%20-%20no%20background.png?alt=media&token=91786a19-154b-4324-8414-a7154a9840d2" alt="Logo" className="w-24 h-24 mx-auto mb-8" />
+          </header>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-            {error}
-          </div>
-        )}
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+              {error}
+            </div>
+          )}
 
-        {success && (
-          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-600 text-sm">
-            {success}
-          </div>
-        )}
+          {success && (
+            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-600 text-sm">
+              {success}
+            </div>
+          )}
 
-        <div className="flex flex-col gap-4 mt-1">
-          <div className="flex flex-col gap-4 mb-1">
-            <input type="email" placeholder="Email address" aria-label="Email address" value={email} onChange={e => setEmail(e.target.value)} className="h-14 rounded-xl border-2 border-[#e2e8f0] bg-[#f8fafc] px-5 text-[15px] font-medium text-[#1a202c] outline-none transition focus:bg-white focus:border-[#ff6f73] focus:ring-4 focus:ring-[rgba(255,111,115,0.1)]" />
-            <input type="password" placeholder="Password" aria-label="Password" value={password} onChange={e => setPassword(e.target.value)} className="h-14 rounded-xl border-2 border-[#e2e8f0] bg-[#f8fafc] px-5 text-[15px] font-medium text-[#1a202c] outline-none transition focus:bg-white focus:border-[#ff6f73] focus:ring-4 focus:ring-[rgba(255,111,115,0.1)]" />
-            <button onClick={handleEmailSignIn} disabled={loading} className="relative group overflow-hidden h-14 rounded-xl bg-gradient-to-br from-[#ff6f73] to-[#ff4757] text-white text-[15px] font-semibold shadow-[0_4px_15px_rgba(255,111,115,0.4)] transition hover:shadow-[0_12px_30px_rgba(255,71,87,0.45)] hover:scale-[1.02] active:scale-100 disabled:opacity-60 disabled:cursor-not-allowed">
+          <div className="flex flex-col gap-4 mt-1">
+            <div className="flex flex-col gap-4 mb-1">
+              <input type="email" placeholder="Email address" aria-label="Email address" value={email} onChange={e => setEmail(e.target.value)} className="h-14 rounded-xl border-2 border-[#e2e8f0] bg-[#f8fafc] px-5 text-[15px] font-medium text-[#1a202c] outline-none transition focus:bg-white focus:border-[#ff6f73] focus:ring-4 focus:ring-[rgba(255,111,115,0.1)]" />
+              <input type="password" placeholder="Password" aria-label="Password" value={password} onChange={e => setPassword(e.target.value)} className="h-14 rounded-xl border-2 border-[#e2e8f0] bg-[#f8fafc] px-5 text-[15px] font-medium text-[#1a202c] outline-none transition focus:bg-white focus:border-[#ff6f73] focus:ring-4 focus:ring-[rgba(255,111,115,0.1)]" />
+              <button onClick={handleEmailSignIn} disabled={loading} className="relative group overflow-hidden h-14 rounded-xl bg-gradient-to-br from-[#ff6f73] to-[#ff4757] text-white text-[15px] font-semibold shadow-[0_4px_15px_rgba(255,111,115,0.4)] transition hover:shadow-[0_12px_30px_rgba(255,71,87,0.45)] hover:scale-[1.02] active:scale-100 disabled:opacity-60 disabled:cursor-not-allowed">
+                <Shine />
+                {loading ? 'Signing in…' : 'Sign In'}
+              </button>
+            </div>
+
+            <button onClick={handleGoogleSignIn} disabled={loading} className="relative group overflow-hidden h-14 rounded-xl bg-gradient-to-br from-[#4285f4] to-[#3367d6] text-white text-[15px] font-semibold shadow-[0_4px_15px_rgba(66,133,244,0.4)] transition hover:shadow-[0_12px_30px_rgba(66,133,244,0.45)] hover:scale-[1.02] active:scale-100 inline-flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed">
               <Shine />
-              {loading ? 'Signing in…' : 'Sign In'}
+              <span className="inline-flex items-center justify-center w-5 h-5"><GoogleIcon /></span>
+              <span>Sign in with Google</span>
+            </button>
+
+            <button onClick={handleAppleSignIn} disabled={loading} className="relative group overflow-hidden h-14 rounded-xl bg-black text-white text-[15px] font-semibold shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition hover:shadow-[0_12px_30px_rgba(0,0,0,0.45)] hover:scale-[1.02] active:scale-100 inline-flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed">
+              <Shine />
+              <span className="inline-flex items-center justify-center w-5 h-5"><AppleIcon /></span>
+              <span>Sign in with Apple</span>
             </button>
           </div>
 
-          <button onClick={handleGoogleSignIn} disabled={loading} className="relative group overflow-hidden h-14 rounded-xl bg-gradient-to-br from-[#4285f4] to-[#3367d6] text-white text-[15px] font-semibold shadow-[0_4px_15px_rgba(66,133,244,0.4)] transition hover:shadow-[0_12px_30px_rgba(66,133,244,0.45)] hover:scale-[1.02] active:scale-100 inline-flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed">
-            <Shine />
-            <span className="inline-flex items-center justify-center w-5 h-5"><GoogleIcon /></span>
-            <span>Sign in with Google</span>
-          </button>
+          <div className="flex items-center gap-4 my-6">
+            <span className="flex-1 h-px bg-gradient-to-r from-transparent via-[#e2e8f0] to-transparent" />
+            <span className="text-[13px] text-[#64748b]">or</span>
+            <span className="flex-1 h-px bg-gradient-to-r from-transparent via-[#e2e8f0] to-transparent" />
+          </div>
 
-          <button onClick={handleAppleSignIn} disabled={loading} className="relative group overflow-hidden h-14 rounded-xl bg-black text-white text-[15px] font-semibold shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition hover:shadow-[0_12px_30px_rgba(0,0,0,0.45)] hover:scale-[1.02] active:scale-100 inline-flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed">
-            <Shine />
-            <span className="inline-flex items-center justify-center w-5 h-5"><AppleIcon /></span>
-            <span>Sign in with Apple</span>
-          </button>
+          <p className="text-[14px] text-[#64748b] mt-2">
+            Don't have an account?
+            <a href="/signup" className="ml-1 font-semibold text-[#ff6f73] hover:underline">Sign Up</a>
+          </p>
         </div>
-
-        <div className="flex items-center gap-4 my-6">
-          <span className="flex-1 h-px bg-gradient-to-r from-transparent via-[#e2e8f0] to-transparent" />
-          <span className="text-[13px] text-[#64748b]">or</span>
-          <span className="flex-1 h-px bg-gradient-to-r from-transparent via-[#e2e8f0] to-transparent" />
-        </div>
-
-        <p className="text-[14px] text-[#64748b] mt-2">
-          Don't have an account?
-          <a href="/signup" className="ml-1 font-semibold text-[#ff6f73] hover:underline">Sign Up</a>
-        </p>
       </div>
     </div>
   );
