@@ -1,9 +1,8 @@
 import React from 'react';
 
 import { Routes, Route } from "react-router-dom";
-
-// @ts-ignore
-import logo from './logo.svg';
+import { ProductListing } from "./pages/Listings/ProductListing";
+import { ProductDetail } from "./pages/ProductDetail";
 import './output.css';
 
 function App() {
@@ -24,3 +23,4 @@ function App() {
 }
 
 export default App;
+
