@@ -25,7 +25,7 @@ export function ProductSidebar({
   };
 
   return (
-    <div className="bg-white min-h-screen p-6">
+    <div  className="bg-white min-h-screen p-6">
       <div className="mb-6">
         <Title level={4} className="flex items-center gap-2 mb-4">
           <FilterOutlined />
