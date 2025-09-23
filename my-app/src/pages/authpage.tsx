@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, OAuthProvider } from "firebase/auth";
-import NavBar from "../components/home/NavBar";
 
 const GoogleIcon = () => (
   <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden focusable="false">
@@ -74,7 +73,6 @@ const AuthPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#fdbfc2]">
-      <NavBar />
       <div className="flex items-center justify-center p-6 relative">
         <div className="w-full max-w-[400px] bg-white rounded-2xl p-12 text-center shadow-[0_20px_25px_-5px_rgba(0,0,0,.1),_0_10px_10px_-5px_rgba(0,0,0,.04)] border border-white/20">
           <header className="mb-8">

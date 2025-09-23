@@ -38,7 +38,9 @@ const NavBar: React.FC = () => {
         style={{ flex: 1, justifyContent: "center", borderBottom: "none" }}
       >
         <Menu.Item key="shop">Shop Local</Menu.Item>
-        <Menu.Item key="categories">Categories</Menu.Item>
+        <Menu.Item key="categories">
+          <a href={"/listings"}>Categories</a>
+          </Menu.Item>
         <Menu.Item key="furnish">
           <a href="/campaign-page">Go Furnish Me</a>
         </Menu.Item>

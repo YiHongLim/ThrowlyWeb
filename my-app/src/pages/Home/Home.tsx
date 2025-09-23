@@ -1,6 +1,5 @@
 import React from "react";
 import { Layout, Typography, Row, Col, Card } from "antd";
-import NavBar from "../../components/home/NavBar";
 import SearchBar from "../../components/home/SearchBar";
 import {electronics, furniture, home, kids, womens, mens, apple, playstore} from "../../assets/images/home_images";
 
@@ -20,7 +19,6 @@ export default function Home() {
   return (
     <Layout style={{ minHeight: "100vh", backgroundColor: "#fff" }}>
       {/* Top Navigation */}
-      <NavBar />
 
       {/* Search Bar */}
       <SearchBar />

@@ -1,31 +1,33 @@
 import React from 'react';
-
-import { Routes, Route } from "react-router-dom";
-
-// @ts-ignore
-import logo from './logo.svg';
-import './output.css';
-import CampaignPage from './pages/Go_Furnish_Me/CampaignPage';
-import GoFurnishMePage from "./pages/Go_Furnish_Me/GoFurnishMePage";
-import CampaignPageDetails from "./pages/Go_Furnish_Me/CampaignPageDetails";
-import Home from './pages/Home/Home';
+import { Routes, Route } from 'react-router-dom';
+import { ProductListing } from './pages/Listings/ProductListing';
+import { ProductDetail } from './components/listing/ProductDetail';
 import AuthPage from './pages/authpage';
 import SignUpPage from './pages/SignUpPage';
 import CartPage from './pages/CartPage';
+import CampaignPage from './pages/Go_Furnish_Me/CampaignPage';
+import CampaignPageDetails from './pages/Go_Furnish_Me/CampaignPageDetails';
+import GoFurnishMePage from './pages/Go_Furnish_Me/GoFurnishMePage';
+import  Home  from './pages/Home/Home';
+import RootLayout from './components/RootLayout';
+import './output.css';
 
 function App() {
-  return (
-    <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/go-furnish-me" element={<GoFurnishMePage />} />
-        <Route path="/campaign-page-details/:id" element={<CampaignPageDetails />} />
-        <Route path="/campaign-page" element={<CampaignPage />} />
-        <Route path="/login" element={<AuthPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/cart" element={<CartPage />} />
-    </Routes>
-
-  );
+    return (
+        <RootLayout>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/go-furnish-me" element={<GoFurnishMePage />} />
+                <Route path="/campaign-page-details" element={<CampaignPageDetails />} />
+                <Route path="/campaign-page" element={<CampaignPage />} />
+                <Route path="/login" element={<AuthPage />} />
+                <Route path="/signup" element={<SignUpPage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/listings" element={<ProductListing />} />
+                <Route path="/listings/:id" element={<ProductDetail />} />
+            </Routes>
+        </RootLayout>
+    );
 }
 
 export default App;
