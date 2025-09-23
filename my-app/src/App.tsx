@@ -18,7 +18,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/go-furnish-me" element={<GoFurnishMePage />} />
-                <Route path="/campaign-page-details" element={<CampaignPageDetails />} />
+                <Route path="/campaign-page-details/:id" element={<CampaignPageDetails />} />
                 <Route path="/campaign-page" element={<CampaignPage />} />
                 <Route path="/login" element={<AuthPage />} />
                 <Route path="/signup" element={<SignUpPage />} />
