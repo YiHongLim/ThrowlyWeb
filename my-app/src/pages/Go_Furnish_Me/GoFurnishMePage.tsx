@@ -5,7 +5,6 @@ import {useNavigate} from "react-router";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import {db} from "../../firebase";
 import {getStorage, ref, uploadBytes, getDownloadURL} from "firebase/storage";
-import NavBar from "../../components/home/NavBar";
 import {useState} from "react";
 
 const { TextArea } = Input;
@@ -51,7 +50,6 @@ export default function GoFurnishMePage() {
 
     return (
         <>
-            <NavBar />
             <Card
                 style={{ maxWidth: 900, margin: '48px auto', padding: 32 }}
             >
