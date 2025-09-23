@@ -16,7 +16,7 @@ interface ProductCardProps {
 
 export function ProductCard({product}: ProductCardProps) {
     return (
-        <Link to={`/listing/${product.id}`} className="block group">
+        <Link to={`/listings/${product.id}`} className="block group">
             <Card
                 hoverable
                 cover={

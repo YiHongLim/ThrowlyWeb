@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import NavBar from "../components/home/NavBar";
 
 
 type CartItem = {
@@ -105,7 +104,6 @@ const CartPage: React.FC = () => {
       `}</style>
 
 
-    <NavBar />
       <div className="container">
         <div className="header">My Cart</div>
 
