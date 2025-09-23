@@ -3,22 +3,9 @@ import { Row, Col, Card, Typography, Progress, Tag } from 'antd';
 import {useNavigate} from "react-router";
 import {collection, getDocs} from "firebase/firestore";
 import {db} from "../../firebase";
+import {CampaignType} from "../../types";
 
 const { Title, Text } = Typography;
-
-type CampaignType = {
-    id: string;
-    title: string;
-    organizer: string;
-    organizerLocation: string;
-    category: string;
-    media: string;
-    raised: number;
-    goal: number;
-    story: string;
-    organizerAvatar?: string; // Optional if sometimes missing
-    // Add any other fields from Firestore as needed
-};
 
 async function getCampaigns() {
     const campaignCol = collection(db, "FurnishCampaign");

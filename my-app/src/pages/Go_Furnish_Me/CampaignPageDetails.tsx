@@ -4,23 +4,9 @@ import {doc, getDoc} from "firebase/firestore";
 import {db} from "../../firebase";
 import ShareCampaignButton from "../../components/go_furnish_me/ShareCampaignButton";
 import {useParams} from "react-router";
+import {CampaignType} from "../../types";
 
 const { Title, Paragraph, Text } = Typography;
-
-
-type CampaignType = {
-    id: string;
-    title: string;
-    organizer: string;
-    organizerLocation: string;
-    category: string;
-    media: string;
-    raised: number;
-    goal: number;
-    story: string;
-    organizerAvatar?: string; // Optional if sometimes missing
-    // Add any other fields from Firestore as needed
-};
 
 export default function CampaignPageDetails() {
     const { id } = useParams();
