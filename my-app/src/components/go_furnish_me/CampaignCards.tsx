@@ -1,48 +1,54 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Row, Col, Card, Typography, Progress, Tag } from 'antd';
 import {useNavigate} from "react-router";
+import {collection, getDocs} from "firebase/firestore";
+import {db} from "../../firebase";
 
 const { Title, Text } = Typography;
 
-// Example data
-const campaigns = [
-    {
-        id: 1,
-        image: '/img1.jpg',
-        location: 'Mooresville, NC',
-        title: 'College student just moved in - Chair and Table',
-        raised: 234,
-        goal: 400
-    },
-    {
-        id: 2,
-        image: '/img2.jpg',
-        location: 'Dallas, TX',
-        title: "Bed needed",
-        raised: 155,
-        goal: 200
-    },
-    {
-        id: 3,
-        image: '/img3.jpg',
-        location: 'Ames, IA',
-        title: "Laptop stand needed",
-        raised: 20,
-        goal: 40
-    },
-    {
-        id: 4,
-        image: '/img3.jpg',
-        location: 'Ames, IA',
-        title: "PC needed",
-        raised: 200,
-        goal: 400
-    }
-    // Add more as needed...
-];
+type CampaignType = {
+    id: string;
+    title: string;
+    organizer: string;
+    organizerLocation: string;
+    category: string;
+    media: string;
+    raised: number;
+    goal: number;
+    story: string;
+    organizerAvatar?: string; // Optional if sometimes missing
+    // Add any other fields from Firestore as needed
+};
 
-export default function CampaignCardsGrid() {
+async function getCampaigns() {
+    const campaignCol = collection(db, "FurnishCampaign");
+    const campaignSnapshot = await getDocs(campaignCol);
+    const campaignList: CampaignType[] = campaignSnapshot.docs.map(doc => ({
+        id: doc.id,
+        media: doc.data().media || '/fallback.jpg',
+        title: doc.data().title || 'No Title',
+        organizer: doc.data().organizer || '',
+        organizerLocation: doc.data().organizerLocation || '',
+        category: doc.data().category || '',
+        raised: doc.data().raised || 0,
+        goal: doc.data().goal || 100,
+        story: doc.data().story || '',
+        organizerAvatar: doc.data().organizerAvatar || ''
+    }));
+    return campaignList;
+}
+export default function CampaignCards() {
     const navigate = useNavigate();
+    const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
+
+    useEffect(() => {
+        async function fetchData() {
+            const data = await getCampaigns();
+            setCampaigns(data);
+        }
+        fetchData();
+    }, [])
+
     return (
         <div style={{ maxWidth: 1200, margin: '2rem auto', padding: '1rem' }}>
             <Title level={4} style={{ marginBottom: 24, fontWeight: 'bold' }}>
@@ -61,7 +67,7 @@ export default function CampaignCardsGrid() {
                             cover={
                                 <div style={{ position: 'relative' }}>
                                     <img
-                                        src={c.image}
+                                        src={c.media}
                                         alt={c.title}
                                         style={{
                                             width: '100%',
@@ -82,13 +88,13 @@ export default function CampaignCardsGrid() {
                                             background: 'rgba(24, 144, 255, 0.8)'
                                         }}
                                     >
-                                        {c.location}
+                                        {/*{c.location}*/}
                                     </Tag>
                                 </div>
                             }
                             style={{ borderRadius: 12, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
                             onClick={() => {
-                                navigate('/campaign-page-details')
+                                navigate(`/campaign-page-details/${c.id}`)
                             }}
                         >
                             <Text strong style={{
