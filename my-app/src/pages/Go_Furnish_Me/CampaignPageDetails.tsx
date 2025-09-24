@@ -5,6 +5,7 @@ import {db} from "../../firebase";
 import ShareCampaignButton from "../../components/go_furnish_me/ShareCampaignButton";
 import {useParams} from "react-router";
 import {CampaignType} from "../../types";
+import DonateNowButton from "../../components/go_furnish_me/DonateNowButton";
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -114,12 +115,7 @@ export default function CampaignPageDetails() {
                                 />
                             </div>
                             <ShareCampaignButton campaignId={campaign.id} />
-                            {/*<Button type="primary" block size="large" style={{ marginBottom: 10 }}>*/}
-                            {/*    Share*/}
-                            {/*</Button>*/}
-                            <Button block size="large" style={{ background: "#d3fdba", border: "none", color: "#137c23", fontWeight: 700 }}>
-                                Donate now
-                            </Button>
+                            <DonateNowButton />
                             <Divider />
                             {/* Recent donation examples */}
                             <div>
