@@ -61,7 +61,7 @@ export default function CampaignPageDetails() {
                     <Col xs={24} md={15}>
                         {/* Campaign Image */}
                         <Card
-                            bodyStyle={{ padding: 0, marginBottom: 24 }}
+                            styles={{ body: {padding: 0} }}
                             style={{ border: "none", marginBottom: 16, background: "#fff" }}
                             cover={
                                 <img

@@ -24,7 +24,7 @@ export default function CampaignHero({ title, subtitle, ctaText, onCtaClick, ima
             flexWrap: 'wrap'
         }}>
             <div style={{ flex: 1, minWidth: 280 }}>
-                <Title level={2} style={{ margin: 0, marginBottom: 12, fontWeight: 800 }}>
+                <Title level={1} style={{ margin: 0, marginBottom: 12, fontWeight: 800 }}>
                     {title}
                 </Title>
                 {subtitle && (
