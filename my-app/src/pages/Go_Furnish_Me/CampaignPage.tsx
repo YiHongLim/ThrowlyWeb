@@ -1,9 +1,8 @@
 import React from 'react';
 import CampaignHero from '../../components/go_furnish_me/CampaignHero';
-import CampaignCardsGrid from "../../components/go_furnish_me/CampaignCardsGrid";
+import CampaignCards from "../../components/go_furnish_me/CampaignCards";
 import {useNavigate} from "react-router";
 import {Divider} from "antd";
-
 
 function CampaignPage() {
     const navigate = useNavigate();
@@ -18,7 +17,7 @@ function CampaignPage() {
                     imageUrl="/logo512.png"
                 />
                 <Divider />
-                <CampaignCardsGrid />
+                <CampaignCards />
             </main>
             <footer className="bg-gray-100 p-4 text-center">
                 <p className="text-sm text-gray-600">&copy; Throwly</p>

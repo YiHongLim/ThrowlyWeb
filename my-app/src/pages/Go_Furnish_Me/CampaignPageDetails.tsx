@@ -1,39 +1,46 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Row, Col, Card, Typography, Button, Progress, Avatar, Divider, Tag } from 'antd';
+import {doc, getDoc} from "firebase/firestore";
+import {db} from "../../firebase";
+import ShareCampaignButton from "../../components/go_furnish_me/ShareCampaignButton";
+import {useParams} from "react-router";
+import {CampaignType} from "../../types";
 
 const { Title, Paragraph, Text } = Typography;
 
-// Example props/data — you’d fetch from API or server in production.
-const campaign = {
-    title: "Chandra Mouli ‘Bob’ Nagamallaiah – Support for His Family",
-    organizer: "Tanmay Patel",
-    organizerLocation: "Dallas, TX",
-    category: "Funerals & Memorials",
-    image: "/img1.jpg",
-    raised: 263565,
-    goal: 400000,
-    story: `
-Yesterday, our dear friend Chandra Mouli “Bob” Nagamallaiah tragically lost his life in a horrific act of violence at Downtown Suites in Dallas. Known as Bob to his friends and family, he was a loving husband, devoted father, and kind soul who touched the lives of everyone who knew him.
+export default function CampaignPageDetails() {
+    const { id } = useParams();
+    const [campaign, setCampaign] = useState<CampaignType | null>(null);
 
-He leaves behind his wife, Nisha, and his 18-year-old son, Gaurav, who just graduated high school and is preparing to begin college this fall. Gaurav dreams of studying Hospitality Management, inspired by his father’s hard work and generosity.
+    useEffect(() => {
+        async function fetchCampaign() {
+            if (!id) return;
+            const campaignDoc = doc(db, "FurnishCampaign", id);
+            const docSnap = await getDoc(campaignDoc);
+            if (docSnap.exists()) {
+                const docData = docSnap.data();
+                setCampaign({
+                    id: docSnap.id,
+                    title: docData?.title || "",
+                    organizer: docData?.organizer || "",
+                    organizerLocation: docData?.organizerLocation || "",
+                    category: docData?.category || "",
+                    media: docData?.media || "",
+                    raised: docData?.raised ?? 0,         // Use 0 if undefined
+                    goal: docData?.goal ?? 0,             // Use 0 if undefined
+                    story: docData?.story || "",
+                    organizerAvatar: docData?.organizerAvatar || ""
+                });
+            } else {
+                setCampaign(null);
+            }
+        }
+        fetchCampaign();
+    }, [id])
+    if (!campaign) {
+        return <div>Loading...</div>;
+    }
 
-This unimaginable tragedy was not only sudden but deeply traumatic. Bob’s life was taken in a brutal attack that occurred in front of his wife and son, who bravely tried to protect him. The shocking nature of this event has shaken our community.
-
-We are coming together as friends, family, and community to support Nisha and Gaurav as they navigate this painful chapter.
-
-Your donations will go directly to:
-• Covering funeral and memorial expenses
-• Helping Nisha and Gaurav with immediate living and household costs
-• Supporting Gaurav’s college education and future
-
-No contribution is too small—every donation will ease their burden and show this family that they are not alone. Even if you are unable to give, please consider sharing this campaign with others.
-
-Let’s honor Bob’s memory and bravery by standing beside his family in their greatest time of need.
-`,
-    organizerAvatar: "/organizer_photo.jpg", // add your image path if available
-};
-
-export default function CampaignDetailGoFundMeStyle() {
     return (
         <div style={{
             minHeight: "100vh",
@@ -58,7 +65,7 @@ export default function CampaignDetailGoFundMeStyle() {
                             cover={
                                 <img
                                     alt="campaign"
-                                    src={campaign.image}
+                                    src={campaign.media}
                                     style={{ width: "100%", maxHeight: 340, objectFit: "cover", borderRadius: 8 }}
                                 />
                             }
@@ -106,9 +113,10 @@ export default function CampaignDetailGoFundMeStyle() {
                                     style={{ height: 10 }}
                                 />
                             </div>
-                            <Button type="primary" block size="large" style={{ marginBottom: 10 }}>
-                                Share
-                            </Button>
+                            <ShareCampaignButton campaignId={campaign.id} />
+                            {/*<Button type="primary" block size="large" style={{ marginBottom: 10 }}>*/}
+                            {/*    Share*/}
+                            {/*</Button>*/}
                             <Button block size="large" style={{ background: "#d3fdba", border: "none", color: "#137c23", fontWeight: 700 }}>
                                 Donate now
                             </Button>
