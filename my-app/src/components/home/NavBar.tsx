@@ -82,11 +82,13 @@ const NavBar: React.FC = () => {
       }}
     >
       {/* Left: Logo */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }} onClick={() => navigate("/")} className={"cursor-pointer"}>
         <img
           src={gutter}
           alt="Throwly Logo"
           style={{ height: "32px" }}
+          className={"rounded-md"}
+
         />
         <Title level={4} style={{ margin: 0 }}>
           Throwly
