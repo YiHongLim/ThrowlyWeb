@@ -1,12 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Menu, Button, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
+import { auth } from "../../firebase";
+import { onAuthStateChanged, User, signOut } from "firebase/auth";
 import {gutter} from "../../assets/images/home_images";
 const { Header } = Layout;
 const { Title } = Typography;
 
 const NavBar: React.FC = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigate("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   return (
     <Header
@@ -51,11 +71,34 @@ const NavBar: React.FC = () => {
         </Menu.Item>
       </Menu>
 
-      {/* Right Auth Buttons */}
-      <div style={{ display: "flex", gap: "12px" }}>
-        <Button type="link" onClick={() => navigate("/login")}>
-          Sign In
-        </Button>
+      {/* Right Auth Buttons and Cart */}
+      <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+        {user ? (
+          <span 
+            style={{ 
+              color: "#1890ff", 
+              fontWeight: "300", 
+              fontSize: "12px",
+              cursor: "pointer",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              transition: "background-color 0.2s"
+            }}
+            onClick={handleSignOut}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#f0f0f0";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "transparent";
+            }}
+          >
+            {user.displayName || user.email|| "User"}
+          </span>
+        ) : (
+          <Button type="link" onClick={() => navigate("/login")}>
+            Sign In
+          </Button>
+        )}
         <Button
           type="primary"
           style={{ backgroundColor: "#ff6b00", border: "none" }}
