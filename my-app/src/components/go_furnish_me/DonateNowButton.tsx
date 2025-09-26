@@ -1,10 +1,24 @@
 import React, { useState } from 'react';
 import { Button } from 'antd';
 import DonateNowForm from "./DonateNowForm";
+import {CampaignType} from "../../types";
+import {getAuth} from "firebase/auth";
+import {useNavigate} from "react-router";
 
-const DonateNowButtonWithModal: React.FC = () => {
+
+const DonateNowButton: React.FC<{ campaign: CampaignType }> = ({ campaign }) => {
     const [showDonate, setShowDonate] = useState(false);
-
+    const [visible, setVisible] = useState(false);
+    const navigate = useNavigate();
+    const handleOpen = () => {
+        const auth = getAuth();
+        const currentUser = auth.currentUser;
+        if(!currentUser) {
+            navigate('/login');
+            return;
+        }
+        setVisible(true);
+    }
     // Handle successful submit
     const handleDonateSubmit = (values: any) => {
         // TODO: Send values to backend/API here
@@ -23,7 +37,7 @@ const DonateNowButtonWithModal: React.FC = () => {
                     color: "#137c23",
                     fontWeight: 700,
                 }}
-                onClick={() => setShowDonate(true)}
+                onClick={() => handleOpen()}
             >
                 Donate now
             </Button>
@@ -31,9 +45,10 @@ const DonateNowButtonWithModal: React.FC = () => {
                 visible={showDonate}
                 onCancel={() => setShowDonate(false)}
                 onSubmit={handleDonateSubmit}
+                campaignId={campaign.id}
             />
         </>
     );
 };
 
-export default DonateNowButtonWithModal;
+export default DonateNowButton;
