@@ -1,35 +1,25 @@
-import {Card, Tag} from "antd";
+import {Card} from "antd";
 import {Link} from "react-router-dom";
+import {ProductType} from "../../types";
 
-export interface Product {
-    id: string;
-    title: string;
-    price: number;
-    image: string;
-    category: string;
-    isNew?: boolean;
-}
 
 interface ProductCardProps {
-    product: Product;
+    product: ProductType;
 }
 
 export function ProductCard({product}: ProductCardProps) {
+
     return (
-        <Link to={`/listings/${product.id}`} className="block group">
+        <Link to={`/listings/${product.geohash}`} className="block group">
             <Card
                 hoverable
                 cover={
-                    <div className="relative overflow-hidden">
+                    <div className="relative overflow-hidden" style={{maxHeight: '250px'}}>
                         <img
-                            src={product.image}
+                            src={product.images[0]?.url || '/fallback.jpg'}
                             alt={product.title}
-                            className="w-full h-12 object-cover transition-transform duration-300 group-hover:scale-105"
+                            className="h-12 object-cover transition-transform duration-300 group-hover:scale-105"
                         />
-                        <div className="absolute top-3 left-3 flex gap-2">
-                            <Tag color="blue">{product.category}</Tag>
-                            {product.isNew && <Tag color="green">New</Tag>}
-                        </div>
                     </div>
                 }
             >
@@ -40,9 +30,9 @@ export function ProductCard({product}: ProductCardProps) {
                         </h3>
                     }
                     description={
-                        <div className="text-lg font-bold text-blue-600">
+                        <span className="text-lg font-bold text-blue-600" style={{color: 'black'}}>
                             ${product.price}
-                        </div>
+                        </span>
                     }
                 />
             </Card>

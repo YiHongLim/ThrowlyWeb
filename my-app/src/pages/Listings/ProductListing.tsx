@@ -1,81 +1,53 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {
     ProductCard,
-    type Product,
 } from "../../components/listing/ProductCard";
 
-import reactLogo from "../../assets/logo192.png";
-import {Layout, Button, Card} from "antd";
+import {Layout, Button, Card, Pagination} from "antd";
 import {ProductSidebar} from "../../components/listing/ProductSideBar";
+import {fetchListings} from "../../data/listings";
+import {ProductType} from "../../types";
 
 const {Sider, Content} = Layout;
-const sampleProducts: Product[] = [
-    {
-        id: "1",
-        title: "Premium Wireless Headphones",
-        price: 199,
-        image: reactLogo,
-        category: "Audio",
-        isNew: true,
-    },
-    {
-        id: "2",
-        title: "Smart Fitness Watch",
-        price: 299,
-        image: reactLogo,
-        category: "Wearables",
-    },
-    {
-        id: "3",
-        title: "Professional Leather Backpack",
-        price: 159,
-        image: reactLogo,
-        category: "Bags",
-    },
-    {
-        id: "4",
-        title: "Mechanical Gaming Keyboard",
-        price: 129,
-        image: reactLogo,
-        category: "Electronics",
-        isNew: true,
-    },
-    {
-        id: "5",
-        title: "Wireless Earbuds Pro",
-        price: 149,
-        image: reactLogo,
-        category: "Audio",
-    },
-    {
-        id: "6",
-        title: "Luxury Travel Bag",
-        price: 229,
-        image: reactLogo,
-        category: "Bags",
-    },
-];
 
 export function ProductListing() {
-    const [products] = useState<Product[]>(sampleProducts);
+
+
+    const [products, setProduct] = useState<ProductType[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [priceSort, setPriceSort] = useState<string>("");
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const ITEMS_PER_PAGE = 10;
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const listings = await fetchListings();
+
+            setProduct(listings);
+            console.log("Fetched listings:", listings);
+        };
+            fetchData();
+    }, []);
+
 
     // Filter products by search query
     let filteredProducts = products.filter((product) => {
         // Search filter
         const matchesSearch =
-            product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            product.category.toLowerCase().includes(searchQuery.toLowerCase());
+            product.title.toLowerCase().includes(searchQuery.toLowerCase())
 
-        // Category filter
-        const matchesCategory =
-            selectedCategories.length === 0 ||
-            selectedCategories.includes(product.category);
+        // // Category filter
+        // const matchesCategory =
+        //     selectedCategories.length === 0 ||
+        //     selectedCategories.includes(product.category);
 
-        return matchesSearch && matchesCategory;
+        // return matchesSearch && matchesCategory;
+        return matchesSearch;
     });
+
+
 
     // Sort products by price
     if (priceSort === "low-to-high") {
@@ -84,68 +56,83 @@ export function ProductListing() {
         filteredProducts = filteredProducts.sort((a, b) => b.price - a.price);
     }
 
-    return (
-        <div>
-            <Card
-                style={{ margin: "24px", boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}
-            >
-            <Layout style={{padding: "12px 24px", backgroundColor: "white"}}>
-                <div>
-                    <Sider
-                        width={280}
-                        style={{marginRight: "24px"}}
-                    >
-                        <ProductSidebar
-                            selectedCategories={selectedCategories}
-                            onCategoryChange={setSelectedCategories}
-                            priceSort={priceSort}
-                            onPriceSortChange={setPriceSort}
-                        />
-                    </Sider>
-                </div>
-                <Content>
-                    <div className="mx-auto px-4 py-8">
-                        <div className="mb-8">
-                            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                                Listings
-                            </h1>
-                            <p className="text-lg text-gray-600">
-                                Search and browse our listings
-                            </p>
-                        </div>
-                        <div style={{
-                            display: "flex",
-                            justifyContent: "flex-end",
-                            marginBottom: "16px",
-                            width: "100%"
-                        }}>
-                            <Button style={{marginRight: "8px"}} type="primary">Add Listing</Button>
-                        </div>
 
-                        <div>
-                            <div className="mt-8">
-                                {filteredProducts.length === 0 ? (
-                                    <div className="text-center py-12">
-                                        <h3 className="text-xl font-semibold text-gray-500 mb-2">
-                                            No items found
-                                        </h3>
-                                        <p className="text-gray-400">Try a different search term</p>
-                                    </div>
-                                ) : (
-                                    <div
-                                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                        {filteredProducts.map((product) => (
-                                            <ProductCard key={product.id} product={product}/>
+    // Pagination calculations
+    const totalProducts = filteredProducts.length;
+    const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const currentProducts = filteredProducts.slice(startIndex, endIndex);
+
+    // Reset to first page when filters change
+    const resetPage = () => setCurrentPage(1);
+
+    return (
+            <Layout style={{padding: "12px 24px", backgroundColor: "rgba(255,71,87,0.45)"}}>
+                <div className="px-6">
+                    <Card>
+                        <Sider
+                            width={280}
+                            style={{marginRight: "24px"}}
+                        >
+                            <ProductSidebar
+                                selectedCategories={selectedCategories}
+                                onCategoryChange={setSelectedCategories}
+                                priceSort={priceSort}
+                                onPriceSortChange={setPriceSort}
+                            />
+                        </Sider>
+                    </Card>
+
+                </div>
+                <Card>
+                    <Content className="container">
+                        <div className="mx-auto px-4 py-8">
+                            <div className="mb-8">
+                                <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                                    Listings
+                                </h1>
+                                <p className="text-lg text-gray-600">
+                                    Search and browse our listings
+                                </p>
+                            </div>
+                            <div style={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                marginBottom: "16px",
+                                width: "100%"
+                            }}>
+                                <Button style={{marginRight: "8px"}} type="primary">Add Listing</Button>
+                            </div>
+
+                            <div>
+                                <div className="mt-8">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                        {currentProducts.map((p: ProductType) => (
+                                            <ProductCard key={p.geohash} product={p}/>
                                         ))}
                                     </div>
-                                )}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </Content>
-            </Layout>
-            </Card>
+                    </Content>
+                    {/* Pagination */}
+                    {totalProducts > 0 && totalPages > 1 && (
+                        <div className="mt-12 flex justify-center">
+                            <Pagination
+                                current={currentPage}
+                                total={totalProducts}
+                                pageSize={ITEMS_PER_PAGE}
+                                onChange={(page) => setCurrentPage(page)}
+                                showSizeChanger={false}
+                                showQuickJumper
+                                showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+                            />
+                        </div>
+                    )}
+                </Card>
 
-        </div>
+            </Layout>
+
     );
 }
