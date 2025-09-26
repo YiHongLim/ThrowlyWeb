@@ -1,5 +1,5 @@
-// import React from 'react';
-import {Form, Input, InputNumber, Select, Button, Card, Row, Col, Typography, Upload} from 'antd';
+import React from 'react';
+import {Form, Input, InputNumber, Select, Button, Card, Row, Col, Typography, Upload, Alert} from 'antd';
 import { ArrowLeftOutlined, InboxOutlined } from '@ant-design/icons';
 import {useNavigate} from "react-router";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
@@ -40,7 +40,7 @@ export default function GoFurnishMePage() {
             });
             setCreatedCampaignId(docRef.id);
             form.resetFields();
-            alert("Furnish-raiser launched!");
+            <Alert message="Furnish-raiser launched!" type="success" />;
         } catch (e) {
             if (e instanceof Error) {
                 alert("Failed to launch furnish-raiser: " + e.message)

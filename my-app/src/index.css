@@ -11,3 +11,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* App.css or index.css */
+/*@theme {*/
+/*    colors: {*/
+/*    brand: #2596be;*/
+/*    secondary: #137c23;*/
+/*// ...other custom colors or theme features*/
+/*}*/
+/*}*/
+
+/*!* Load Tailwind's layers *!*/
+/*@import "tailwindcss/preflight";*/
+/*@import "tailwindcss/components";*/
+/*@import "tailwindcss/utilities";*/

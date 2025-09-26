@@ -11,12 +11,14 @@ import GoFurnishMePage from './pages/Go_Furnish_Me/GoFurnishMePage';
 import  Home  from './pages/Home/Home';
 import RootLayout from './components/RootLayout';
 import './output.css';
+import DonateNowForm from "./components/go_furnish_me/DonateNowForm";
 
 function App() {
     return (
         <RootLayout>
             <Routes>
                 <Route path="/" element={<Home />} />
+                
                 <Route path="/go-furnish-me" element={<GoFurnishMePage />} />
                 <Route path="/campaign-page-details/:id" element={<CampaignPageDetails />} />
                 <Route path="/campaign-page" element={<CampaignPage />} />
