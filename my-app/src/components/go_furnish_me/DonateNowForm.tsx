@@ -1,16 +1,43 @@
 import React from 'react';
-import { Modal, Form, Input, InputNumber, Button, Select } from 'antd';
+import {Modal, Form, Input, InputNumber, Button, Select, Upload} from 'antd';
+import {InboxOutlined} from "@ant-design/icons";
+import {getDownloadURL, getStorage, ref, uploadBytes} from "firebase/storage";
+import {addDoc, collection, serverTimestamp} from "firebase/firestore";
+import {db} from "../../firebase";
 
 type DonateNowFormProps = {
     visible: boolean;
     onCancel: () => void;
     onSubmit: (values: any) => void;
+    campaignId: string;
 };
 
 const { TextArea } = Input;
 
-const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubmit }) => {
+const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubmit, campaignId }) => {
     const [form] = Form.useForm();
+    const storage = getStorage();
+
+    const handleFinish = async(values:any) => {
+        let mediaUrl = null;
+
+        if (values.media && values.media.length > 0) {
+            const file = values.media[0].originFileObj;
+            const storageRef = ref(storage, `CampaignDonations/${file.name}`);
+            await uploadBytes(storageRef, file);
+            mediaUrl = await getDownloadURL(storageRef);
+        }
+
+        const docRef = await addDoc(collection(db, "CampaignDonations"), {
+            ...values,
+            media: mediaUrl,
+            created_at: serverTimestamp(),
+            campaignId
+        })
+        form.resetFields();
+        onSubmit(docRef);
+        onCancel();
+    }
 
     return (
         <Modal
@@ -23,7 +50,7 @@ const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubm
             <Form
                 form={form}
                 layout="vertical"
-                onFinish={onSubmit}
+                onFinish={handleFinish}
             >
                 <Form.Item
                     label="Donor Name"
@@ -31,17 +58,6 @@ const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubm
                     rules={[{ required: true, message: 'Your name is required!' }]}
                 >
                     <Input placeholder="Full name" />
-                </Form.Item>
-
-                <Form.Item
-                    label="Email"
-                    name="email"
-                    rules={[
-                        { required: true, message: 'Your email is required!' },
-                        { type: 'email', message: 'Please enter a valid email!' },
-                    ]}
-                >
-                    <Input placeholder="Email address" />
                 </Form.Item>
 
                 <Form.Item
@@ -53,6 +69,15 @@ const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubm
                         <Select.Option value="money">Money</Select.Option>
                         <Select.Option value="goods">Goods/Items</Select.Option>
                     </Select>
+                </Form.Item>
+
+                <Form.Item label="Media (Image/Video)" name="media" valuePropName={"fileList"} getValueFromEvent={e => Array.isArray(e) ? e : e && e.fileList}>
+                    <Upload.Dragger>
+                        <p className="ant-upload-drag-icon">
+                            <InboxOutlined />
+                        </p>
+                        <p className={"ant-upload-text"}>Click or drag file to this area to upload</p>
+                    </Upload.Dragger>
                 </Form.Item>
 
                 <Form.Item
