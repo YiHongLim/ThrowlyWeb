@@ -8,7 +8,6 @@ import {useNavigate} from "react-router";
 
 const DonateNowButton: React.FC<{ campaign: CampaignType }> = ({ campaign }) => {
     const [showDonate, setShowDonate] = useState(false);
-    const [visible, setVisible] = useState(false);
     const navigate = useNavigate();
     const handleOpen = () => {
         const auth = getAuth();
@@ -17,7 +16,8 @@ const DonateNowButton: React.FC<{ campaign: CampaignType }> = ({ campaign }) => 
             navigate('/login');
             return;
         }
-        setVisible(true);
+        console.log(currentUser);
+        setShowDonate(true);
     }
     // Handle successful submit
     const handleDonateSubmit = (values: any) => {
