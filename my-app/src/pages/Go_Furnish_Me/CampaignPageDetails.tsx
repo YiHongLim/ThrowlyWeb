@@ -2,10 +2,12 @@ import React, {useEffect, useState} from 'react';
 import { Row, Col, Card, Typography, Button, Progress, Avatar, Divider, Tag } from 'antd';
 import {doc, getDoc} from "firebase/firestore";
 import {db} from "../../firebase";
-import ShareCampaignButton from "../../components/go_furnish_me/ShareCampaignButton";
 import {useParams} from "react-router";
 import {CampaignType} from "../../types";
 import DonateNowButton from "../../components/go_furnish_me/DonateNowButton";
+import {withAuthProtection} from "../../components/WithAuthProtection";
+import shareCampaignButton from "../../components/go_furnish_me/ShareCampaignButton";
+import ShareCampaignButton from "../../components/go_furnish_me/ShareCampaignButton";
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -115,7 +117,7 @@ export default function CampaignPageDetails() {
                                 />
                             </div>
                             <ShareCampaignButton campaignId={campaign.id} />
-                            <DonateNowButton />
+                            <DonateNowButton campaign={campaign} />
                             <Divider />
                             {/* Recent donation examples */}
                             <div>
