@@ -52,13 +52,13 @@ const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubm
                 layout="vertical"
                 onFinish={handleFinish}
             >
-                <Form.Item
-                    label="Donor Name"
-                    name="name"
-                    rules={[{ required: true, message: 'Your name is required!' }]}
-                >
-                    <Input placeholder="Full name" />
-                </Form.Item>
+                {/*<Form.Item*/}
+                {/*    label="Donor Name"*/}
+                {/*    name="name"*/}
+                {/*    rules={[{ required: true, message: 'Your name is required!' }]}*/}
+                {/*>*/}
+                {/*    <Input placeholder="Full name" />*/}
+                {/*</Form.Item>*/}
 
                 <Form.Item
                     label="Donation Type"
