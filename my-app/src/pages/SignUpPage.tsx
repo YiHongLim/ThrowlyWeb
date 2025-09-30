@@ -22,6 +22,10 @@ const SignUpPage: React.FC = () => {
   const [success, setSuccess] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  
+  // Password visibility states
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // debounce ref for username uniqueness checks
   const debounceRef = useRef<number | null>(null);
@@ -245,8 +249,44 @@ const SignUpPage: React.FC = () => {
               {usernameAvailable && <p className="text-green-600 text-xs text-left -mt-2">Username available</p>}
 
               <input type="email" placeholder="Email address *" value={email} onChange={e => setEmail(e.target.value)} className={`${baseInputClass} form-input`} />
-              <input type="password" placeholder="Password *" value={password} onChange={e => setPassword(e.target.value)} className={`${baseInputClass} form-input`} />
-              <input type="password" placeholder="Confirm Password *" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className={`${baseInputClass} form-input`} />
+              
+              {/* Password field with toggle */}
+              <div className="relative">
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  placeholder="Password *" 
+                  value={password} 
+                  onChange={e => setPassword(e.target.value)} 
+                  className={`${baseInputClass} form-input w-full pr-12`} 
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-4 flex items-center text-[#ff6f73] hover:text-[#ff4757] text-sm font-medium focus:outline-none"
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+
+              {/* Confirm Password field with toggle */}
+              <div className="relative">
+                <input 
+                  type={showConfirmPassword ? "text" : "password"} 
+                  placeholder="Confirm Password *" 
+                  value={confirmPassword} 
+                  onChange={e => setConfirmPassword(e.target.value)} 
+                  className={`${baseInputClass} form-input w-full pr-12`} 
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute inset-y-0 right-4 flex items-center text-[#ff6f73] hover:text-[#ff4757] text-sm font-medium focus:outline-none"
+                >
+                  {showConfirmPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+              
+    
 
               {/* Sex (optional) */}
               <select value={sex} onChange={(e) => setSex(e.target.value)} className={`${baseInputClass} form-select`}>
@@ -258,7 +298,6 @@ const SignUpPage: React.FC = () => {
 
               {/* Birthday (optional) */}
               <input type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} className={`${baseInputClass} form-input`} placeholder="Birthday (optional)" />
-
 
               {/* Profile picture (optional) */}
               <div className="text-left">

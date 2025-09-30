@@ -17,6 +17,7 @@ const { TextArea } = Input;
 const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubmit, campaignId }) => {
     const [form] = Form.useForm();
     const storage = getStorage();
+    // const { currentUser } = useAuth();
 
     const handleFinish = async(values:any) => {
         let mediaUrl = null;
@@ -52,13 +53,13 @@ const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubm
                 layout="vertical"
                 onFinish={handleFinish}
             >
-                <Form.Item
-                    label="Donor Name"
-                    name="name"
-                    rules={[{ required: true, message: 'Your name is required!' }]}
-                >
-                    <Input placeholder="Full name" />
-                </Form.Item>
+                {/*<Form.Item*/}
+                {/*    label="Donor Name"*/}
+                {/*    name="name"*/}
+                {/*    rules={[{ required: true, message: 'Your name is required!' }]}*/}
+                {/*>*/}
+                {/*    <Input placeholder="Full name" />*/}
+                {/*</Form.Item>*/}
 
                 <Form.Item
                     label="Donation Type"
