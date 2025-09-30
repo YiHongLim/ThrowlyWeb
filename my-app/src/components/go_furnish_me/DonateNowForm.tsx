@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Modal, Form, Input, InputNumber, Button, Select, Upload} from 'antd';
 import {InboxOutlined} from "@ant-design/icons";
 import {getDownloadURL, getStorage, ref, uploadBytes} from "firebase/storage";
 import {addDoc, collection, serverTimestamp} from "firebase/firestore";
 import {db} from "../../firebase";
+import {getLLMPrice} from "../../utils/api";
 
 type DonateNowFormProps = {
     visible: boolean;
@@ -14,8 +15,19 @@ type DonateNowFormProps = {
 
 const { TextArea } = Input;
 
+// TEMP: Replace these with real values as needed
+const latitude = 37.7749;   // e.g., from geolocation or props
+const longitude = -122.4194;  // e.g., from geolocation or props
+const username = "user_jt7bdy"; // e.g., from auth context
+const model = "claude-3-haiku-20240307"; // or your target model
+
 const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubmit, campaignId }) => {
     const [form] = Form.useForm();
+    const [imageUrls, setImageUrls] = React.useState<string[]>([]);
+    const [description, setDescription] = React.useState('');
+    const [estimatedAmount, setEstimatedAmount] = React.useState(null);
+    const [uploading, setUploading] = useState(false);
+
     const storage = getStorage();
     // const { currentUser } = useAuth();
 
@@ -31,14 +43,65 @@ const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubm
 
         const docRef = await addDoc(collection(db, "CampaignDonations"), {
             ...values,
+            amount: estimatedAmount,
             media: mediaUrl,
             created_at: serverTimestamp(),
             campaignId
         })
-        form.resetFields();
+        setImageUrls([]);
+        setDescription('');
+        setEstimatedAmount(null);
         onSubmit(docRef);
         onCancel();
     }
+
+    const handleValuesChange = async (changed: any, allValues: any) => {
+        if ('media' in changed && allValues.media?.length > 0) {
+            const file = allValues.media[0].originFileObj;
+            const storageRef = ref(storage, `CampaignDonations/${file.name}`);
+            await uploadBytes(storageRef, file);
+            const mediaUrl = await getDownloadURL(storageRef);
+
+            setImageUrls([mediaUrl]);  // set to uploaded Firebase URL!
+            setUploading(false);
+        } else if ('media' in changed && (!allValues.media || allValues.media.length === 0)) {
+            setImageUrls([]);
+        }
+        if ('description' in changed) {
+            setDescription(allValues.description || '');
+        }
+    };
+
+
+    useEffect(() => {
+        // Only run if both an uploaded Firebase image URL and a non-empty description are available
+        if (imageUrls.length > 0 && description.trim() !== '' && !uploading) {
+            // Print for debugging
+            console.log("imageUrls:", imageUrls);
+            console.log("First imageUrl:", imageUrls[0]);
+            console.log("Description:", description);
+            console.log("Uploading flag:", uploading);
+            const fetchEstimate = async () => {
+                try {
+                    // Always use the Firebase Storage URL, not a blob!
+                    const priceResult = await getLLMPrice(
+                        [imageUrls[0]],
+                        description,
+                        latitude,
+                        longitude,
+                        username,
+                        model
+                    );
+                    const llmPrice = priceResult.listing.llmPrice;
+                    setEstimatedAmount(llmPrice);
+                    console.log('Estimate:', llmPrice , { url: imageUrls[0], description });
+                } catch (e) {
+                    console.error("Estimation error:", e, { url: imageUrls[0], description });
+                }
+            };
+            fetchEstimate();
+        }
+    }, [imageUrls, description, uploading]);
 
     return (
         <Modal
@@ -52,34 +115,33 @@ const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubm
                 form={form}
                 layout="vertical"
                 onFinish={handleFinish}
+                onValuesChange={handleValuesChange}
             >
-                {/*<Form.Item*/}
-                {/*    label="Donor Name"*/}
-                {/*    name="name"*/}
-                {/*    rules={[{ required: true, message: 'Your name is required!' }]}*/}
-                {/*>*/}
-                {/*    <Input placeholder="Full name" />*/}
-                {/*</Form.Item>*/}
-
-                <Form.Item
-                    label="Donation Type"
-                    name="type"
-                    rules={[{ required: true, message: 'Select what you want to donate!' }]}
-                >
-                    <Select>
-                        <Select.Option value="money">Money</Select.Option>
-                        <Select.Option value="goods">Goods/Items</Select.Option>
-                    </Select>
-                </Form.Item>
+                {/* store the donor name */}
 
                 <Form.Item label="Media (Image/Video)" name="media" valuePropName={"fileList"} getValueFromEvent={e => Array.isArray(e) ? e : e && e.fileList}>
-                    <Upload.Dragger>
+                    <Upload.Dragger
+                        beforeUpload={() => false}>
                         <p className="ant-upload-drag-icon">
                             <InboxOutlined />
                         </p>
-                        <p className={"ant-upload-text"}>Click or drag file to this area to upload</p>
+                        <p className={"ant-upload-text"}>Click or drag file to this area to upload your donation item</p>
                     </Upload.Dragger>
                 </Form.Item>
+
+                <Form.Item
+                    label="Description"
+                    name="description"
+                    dependencies={['type']}
+                >
+                    <TextArea rows={2} placeholder="Describe item(s), quantity, brand, condition, etc." />
+                </Form.Item>
+
+                {estimatedAmount !== null && (
+                    <div style={{ marginBottom: 16, color: '#1890ff', fontWeight: 500 }}>
+                        Estimated Amount: ${estimatedAmount}
+                    </div>
+                )}
 
                 <Form.Item
                     label="Amount ($)"
@@ -99,23 +161,8 @@ const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubm
                     <InputNumber min={1} placeholder="Amount in USD" style={{ width: '100%' }} />
                 </Form.Item>
 
-                <Form.Item
-                    label="Goods/Items to Donate"
-                    name="goods"
-                    dependencies={['type']}
-                    rules={[
-                        ({ getFieldValue }) => ({
-                            validator(_, value) {
-                                if (getFieldValue('type') === 'goods' && (!value || value.trim() === '')) {
-                                    return Promise.reject('Please describe what you want to donate!');
-                                }
-                                return Promise.resolve();
-                            }
-                        }),
-                    ]}
-                >
-                    <TextArea rows={2} placeholder="Describe item(s), quantity, brand, condition, etc." />
-                </Form.Item>
+
+
 
                 <Form.Item label="Message or Note" name="note">
                     <TextArea rows={2} placeholder="Leave a message for the campaign (optional)" />
