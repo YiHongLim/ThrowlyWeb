@@ -17,6 +17,7 @@ const { TextArea } = Input;
 const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubmit, campaignId }) => {
     const [form] = Form.useForm();
     const storage = getStorage();
+    // const { currentUser } = useAuth();
 
     const handleFinish = async(values:any) => {
         let mediaUrl = null;
