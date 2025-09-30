@@ -13,6 +13,10 @@ import {
   getDoc,
   runTransaction,
   serverTimestamp,
+  collection,
+  getDocs,
+  where,
+  query,
 } from "firebase/firestore";
 import { ref as storageRefFn, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -93,6 +97,7 @@ export const signUp = async (userObject: {
   profilePicture?: string | null;
   sex?: string | null;
   birthday?: string | null;
+  location?: string | null;
   numListings?: number;
   score?: number;
   preferences?: object;
@@ -118,33 +123,35 @@ export const signUp = async (userObject: {
       email: userObject.email.toLowerCase(),
       firstName: userObject.firstName.trim(),
       lastName: userObject.lastName.trim(),
-      profilePicture: userObject.profilePicture || null, // store as null instead of empty string
+      profilePicture: userObject.profilePicture || "",
       sex: userObject.sex || null,
-      birthday: userObject.birthday || null, // renamed from dob
+      birthday: userObject.birthday || "",
+      location: userObject.location || null,
       geohash: null, // will be calculated later if needed
       numListings: userObject.numListings ?? 0,
       score: userObject.score ?? 50,
-      createdAt: new Date().toISOString(),
+      preferences: userObject.preferences,
+      isPrivateEmail: userObject.isPrivateEmail ?? false,
+      shouldUpdateProfile: userObject.shouldUpdateProfile ?? false,
     };
 
-    // 2) Transactionally claim username and write Users/{uid}
+    // 2) Transactionally check username uniqueness and write Users/{uid}
     await runTransaction(db, async (tx) => {
-      const nameRef = doc(db, "usernames", usernameId);
-      const nameSnap = await tx.get(nameRef);
-      if (nameSnap.exists()) {
+      // Check if username already exists in Users collection
+      const usersRef = collection(db, "Users");
+      const q = query(usersRef, where("username", "==", usernameId));
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
         throw new Error("USERNAME_TAKEN");
       }
 
+      // Create the user document
       const userRef = doc(db, "Users", uid);
       tx.set(userRef, {
         ...userDocData,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
-      });
-
-      tx.set(nameRef, {
-        userId: uid,
-        createdAt: serverTimestamp(),
       });
     });
 
@@ -217,3 +224,23 @@ export const signInWithAppleWeb = async () => {
       throw err;
     }
   };
+
+/**
+ * Get user data from Firestore Users collection
+ * @param uid - The user's Firebase Auth UID
+ * @returns User data object or null if not found
+ */
+export const getUserData = async (uid: string): Promise<any | null> => {
+  try {
+    const userRef = doc(db, "Users", uid);
+    const userSnap = await getDoc(userRef);
+    
+    if (userSnap.exists()) {
+      return userSnap.data();
+    }
+    return null;
+  } catch (err) {
+    console.error("Error fetching user data:", err);
+    return null;
+  }
+};
