@@ -224,3 +224,23 @@ export const signInWithAppleWeb = async () => {
       throw err;
     }
   };
+
+/**
+ * Get user data from Firestore Users collection
+ * @param uid - The user's Firebase Auth UID
+ * @returns User data object or null if not found
+ */
+export const getUserData = async (uid: string): Promise<any | null> => {
+  try {
+    const userRef = doc(db, "Users", uid);
+    const userSnap = await getDoc(userRef);
+    
+    if (userSnap.exists()) {
+      return userSnap.data();
+    }
+    return null;
+  } catch (err) {
+    console.error("Error fetching user data:", err);
+    return null;
+  }
+};
