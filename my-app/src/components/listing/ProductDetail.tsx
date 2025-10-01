@@ -13,7 +13,6 @@ export function ProductDetail() {
     useEffect(() => {
         const fetchData = async () => {
             const listings = await fetchSpecificListing(id || "");
-            console.log("Fetched specific listing:", listings);
             setProduct(listings);
         };
         fetchData();
