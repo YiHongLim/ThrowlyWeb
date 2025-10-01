@@ -24,9 +24,7 @@ export function ProductListing() {
     useEffect(() => {
         const fetchData = async () => {
             const listings = await fetchListings();
-
             setProduct(listings);
-            console.log("Fetched listings:", listings);
         };
             fetchData();
     }, []);
@@ -68,7 +66,7 @@ export function ProductListing() {
     const resetPage = () => setCurrentPage(1);
 
     return (
-            <Layout style={{padding: "12px 24px", backgroundColor: "rgba(255,71,87,0.45)"}}>
+            <Layout style={{padding: "12px 24px"}}>
                 <div className="px-6">
                     <Card>
                         <Sider
@@ -102,14 +100,14 @@ export function ProductListing() {
                                 marginBottom: "16px",
                                 width: "100%"
                             }}>
-                                <Button style={{marginRight: "8px"}} type="primary">Add Listing</Button>
+                                <Button style={{marginRight: "8px",backgroundColor: 'rgba(255,71,87,0.45)'}} type="primary">Add Listing</Button>
                             </div>
 
                             <div>
                                 <div className="mt-8">
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                         {currentProducts.map((p: ProductType) => (
-                                            <ProductCard key={p.geohash} product={p}/>
+                                            <ProductCard key={p.id} product={p}/>
                                         ))}
                                     </div>
                                 </div>

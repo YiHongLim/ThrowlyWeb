@@ -22,6 +22,7 @@ interface locationProps{
 }
 
 export type ProductType = {
+    id:string;
     status: string;
     buyerId?: string;
     categoryId: string;

@@ -30,7 +30,7 @@ export function ProductDetail() {
     }
 
     return (
-        <main className="min-h-screen py-6" style={{backgroundColor:'rgba(255,71,87,0.45)'}}>
+        <main className="min-h-screen py-6">
             <div className="mx-auto container px-4 py-8">
                 <Card>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12 mb-8 items-start">

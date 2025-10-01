@@ -10,7 +10,7 @@ interface ProductCardProps {
 export function ProductCard({product}: ProductCardProps) {
 
     return (
-        <Link to={`/listings/${product.geohash}`} className="block group">
+        <Link to={`/listings/${product.id}`} className="block group">
             <Card
                 hoverable
                 cover={
