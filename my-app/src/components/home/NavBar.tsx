@@ -123,6 +123,9 @@ const NavBar: React.FC = () => {
         <Menu.Item key="about">
           <a href="/about">About Throwly</a>
         </Menu.Item>
+        <Menu.Item key="faq">
+          <a href="/faq">FAQ</a>
+        </Menu.Item>
         <Menu.Item key="cart">
           <a href="/cart">Cart</a>
         </Menu.Item>

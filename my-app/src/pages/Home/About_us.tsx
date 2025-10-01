@@ -11,21 +11,30 @@ import {
   TeamOutlined,
   ShopOutlined
 } from "@ant-design/icons";
+import blobBackground from "../../assets/images/gofurnishme_images/blob-scene-haikei-1.svg";
 
 const { Title, Paragraph, Text } = Typography;
 
 const AboutUs: React.FC = () => {
-  const containerStyle = {
+  const containerStyle: React.CSSProperties = {
     minHeight: "100vh",
     backgroundColor: "#ffffff",
-    padding: "24px",
+    padding: "0",
+    scrollBehavior: "smooth",
   };
 
-  const cardStyle = {
-    borderRadius: "16px",
-    boxShadow: "0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04)",
+  const cardStyle: React.CSSProperties = {
+    borderRadius: "20px",
+    boxShadow: "0 20px 40px -10px rgba(0,0,0,.08), 0 10px 20px -5px rgba(0,0,0,.04)",
     border: "1px solid rgba(255,255,255,0.2)",
-    marginBottom: "32px",
+    marginBottom: "40px",
+    transition: "all 0.3s ease",
+    transform: "translateY(0)",
+  };
+
+  const cardHoverStyle: React.CSSProperties = {
+    transform: "translateY(-4px)",
+    boxShadow: "0 25px 50px -10px rgba(0,0,0,.12), 0 15px 30px -5px rgba(0,0,0,.08)",
   };
 
   const gradientButtonStyle = {
@@ -106,23 +115,65 @@ const AboutUs: React.FC = () => {
     }
   ];
 
-  return (
+    return (
     <div style={containerStyle}>
-      <div style={{ maxWidth: "1024px", margin: "0 auto" }}>
-        {/* Main Header Card */}
-        <Card style={cardStyle} bodyStyle={{ padding: "24px", textAlign: "center" }}>
-          <img 
-            src="https://firebasestorage.googleapis.com/v0/b/gutter-bc42f.appspot.com/o/Black%20logo%20-%20no%20background.png?alt=media&token=91786a19-154b-4324-8414-a7154a9840d2" 
-            alt="Logo" 
-            style={{ width: "600px", height: "400px", margin: "0 auto 24px auto", display: "block" }}
-          />
-          <Paragraph style={{ fontSize: "18px", color: "#64748b", maxWidth: "512px", margin: "0 auto" }}>
-          We believe that the future of local ecommerce is free, sustainable, and rewarding
-          </Paragraph>
-        </Card>
+      {/* Hero Banner Section */}
+      <div
+        style={{
+          width: '100%',
+          position: 'relative',
+          minHeight: 420,
+          backgroundImage: `url(${blobBackground})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          overflow: 'hidden'
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+            maxWidth: 1200,
+            margin: "0 auto",
+            padding: "48px 24px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 32,
+            flexWrap: "wrap",
+            zIndex: 1
+          }}
+        >
+          <div style={{ flex: 1, minWidth: 280, textAlign: "center" }}>
+            <img 
+              src="https://firebasestorage.googleapis.com/v0/b/gutter-bc42f.appspot.com/o/Black%20logo%20-%20no%20background.png?alt=media&token=91786a19-154b-4324-8414-a7154a9840d2" 
+              alt="Logo" 
+              style={{ width: "300px", height: "200px", margin: "0 auto 24px auto", display: "block" }}
+            />
+            <Title level={1} style={{ margin: 0, marginBottom: 12, fontWeight: 800, color: "#ffffff" }}>
+              About Throwly
+            </Title>
+            <Paragraph style={{ fontSize: "1.125rem", color: "#ffffff", marginBottom: 24, maxWidth: "500px", margin: "0 auto" }}>
+              We believe that the future of local ecommerce is free, sustainable, and rewarding
+            </Paragraph>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: "1024px", margin: "0 auto", padding: "60px 24px" }}>
 
         {/* Our Story Section */}
-        <Card style={cardStyle} bodyStyle={{ padding: "48px" }}>
+        <Card 
+          style={cardStyle} 
+          bodyStyle={{ padding: "60px" }}
+          className="fade-in-section"
+          onMouseEnter={(e) => {
+            Object.assign(e.currentTarget.style, cardHoverStyle);
+          }}
+          onMouseLeave={(e) => {
+            Object.assign(e.currentTarget.style, cardStyle);
+          }}
+        >
           <Title level={2} style={{ textAlign: "center", fontSize: "32px", fontWeight: "bold", color: "#1a202c", marginBottom: "32px" }}>
             Our Story
           </Title>
@@ -140,10 +191,19 @@ const AboutUs: React.FC = () => {
         </Card>
 
         {/* Mission & Values */}
-        <Row gutter={32} style={{ marginBottom: "32px" }}>
+        <Row gutter={40} style={{ marginBottom: "40px" }}>
           {/* Mission */}
           <Col xs={24} md={12}>
-            <Card style={cardStyle} bodyStyle={{ padding: "32px", textAlign: "center" }}>
+            <Card 
+              style={cardStyle} 
+              bodyStyle={{ padding: "40px", textAlign: "center" }}
+              onMouseEnter={(e) => {
+                Object.assign(e.currentTarget.style, cardHoverStyle);
+              }}
+              onMouseLeave={(e) => {
+                Object.assign(e.currentTarget.style, cardStyle);
+              }}
+            >
               <Avatar
                 size={64}
                 style={{
@@ -163,7 +223,16 @@ const AboutUs: React.FC = () => {
 
           {/* Values */}
           <Col xs={24} md={12}>
-            <Card style={cardStyle} bodyStyle={{ padding: "32px", textAlign: "center" }}>
+            <Card 
+              style={cardStyle} 
+              bodyStyle={{ padding: "40px", textAlign: "center" }}
+              onMouseEnter={(e) => {
+                Object.assign(e.currentTarget.style, cardHoverStyle);
+              }}
+              onMouseLeave={(e) => {
+                Object.assign(e.currentTarget.style, cardStyle);
+              }}
+            >
               <Avatar
                 size={64}
                 style={{
@@ -183,22 +252,45 @@ const AboutUs: React.FC = () => {
         </Row>
 
         {/* Key Innovations Section */}
-        <Card style={cardStyle} bodyStyle={{ padding: "48px" }}>
+        <Card 
+          style={cardStyle} 
+          bodyStyle={{ padding: "60px" }}
+          onMouseEnter={(e) => {
+            Object.assign(e.currentTarget.style, cardHoverStyle);
+          }}
+          onMouseLeave={(e) => {
+            Object.assign(e.currentTarget.style, cardStyle);
+          }}
+        >
           <Title level={2} style={{ textAlign: "center", fontSize: "32px", fontWeight: "bold", color: "#1a202c", marginBottom: "32px" }}>
             Key Innovations
           </Title>
-          <Row gutter={[32, 32]}>
+          <Row gutter={[40, 32]}>
             {innovations.map((innovation, index) => (
               <Col xs={24} md={12} key={index}>
-                <div style={{ 
-                  display: "flex", 
-                  alignItems: "flex-start", 
-                  padding: "24px",
-                  borderRadius: "12px",
-                  backgroundColor: "#f8fafc",
-                  border: "1px solid #e2e8f0",
-                  height: "100%"
-                }}>
+                <div 
+                  style={{ 
+                    display: "flex", 
+                    alignItems: "flex-start", 
+                    padding: "32px",
+                    borderRadius: "16px",
+                    backgroundColor: "#f8fafc",
+                    border: "1px solid #e2e8f0",
+                    height: "100%",
+                    transition: "all 0.3s ease",
+                    cursor: "pointer"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#f1f5f9";
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                    e.currentTarget.style.boxShadow = "0 8px 25px -5px rgba(0,0,0,.1)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "#f8fafc";
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
+                >
                   <Avatar
                     size={48}
                     style={{
@@ -269,7 +361,16 @@ const AboutUs: React.FC = () => {
         </Card>
         */}
         {/* Contact & CTA Section */}
-        <Card style={cardStyle} bodyStyle={{ padding: "48px", textAlign: "center" }}>
+        <Card 
+          style={cardStyle} 
+          bodyStyle={{ padding: "60px", textAlign: "center" }}
+          onMouseEnter={(e) => {
+            Object.assign(e.currentTarget.style, cardHoverStyle);
+          }}
+          onMouseLeave={(e) => {
+            Object.assign(e.currentTarget.style, cardStyle);
+          }}
+        >
           <Title level={2} style={{ fontSize: "32px", fontWeight: "bold", color: "#1a202c", marginBottom: "24px" }}>
             Ready to Give & Get Locally?
           </Title>
@@ -315,8 +416,8 @@ const AboutUs: React.FC = () => {
             </Button>
           </div>
 
-          <div style={{ borderTop: "1px solid #e2e8f0", paddingTop: "32px" }}>
-            <Row gutter={48} justify="center">
+          <div style={{ borderTop: "1px solid #e2e8f0", paddingTop: "40px", marginTop: "40px" }}>
+            <Row gutter={[48, 32]} justify="center">
               {contactInfo.map((info, index) => (
                 <Col xs={24} sm={12} key={index} style={{ textAlign: "center" }}>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
