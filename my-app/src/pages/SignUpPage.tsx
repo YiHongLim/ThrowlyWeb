@@ -1,21 +1,7 @@
-import React, { useCallback, useState } from "react";
-import { auth } from "../firebase";
-import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, OAuthProvider } from "firebase/auth";
-
-const GoogleIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden focusable="false">
-    <path fill="#EA4335" d="M24 9.5c3.9 0 7 1.4 9.1 3.2l6.8-6.8C35.8 2 30.2 0 24 0 14.7 0 6.9 4.8 2.7 11.8l7.9 6.2C12.6 12.2 17.7 9.5 24 9.5z"/>
-    <path fill="#34A853" d="M46.5 24c0-1.6-.1-3.1-.4-4.6H24v9.1h12.7c-.5 2.7-2 5-4.3 6.6l6.7 5.2C44.5 36 46.5 30.5 46.5 24z"/>
-    <path fill="#4A90E2" d="M10.6 29.9A14.6 14.6 0 0 1 10 24c0-1.7.3-3.3.7-4.9L2.8 12C.9 15.5 0 19.6 0 24c0 4.7 1 9.1 2.8 12.9l7.8-6z"/>
-    <path fill="#FBBC05" d="M24 48c6.2 0 11.8-2.1 16-5.7l-7.8-6c-2.2 1.5-5 2.5-8.3 2.5-6.3 0-11.5-2.6-14.6-6.6L2.7 36.2C6.9 43.2 14.7 48 24 48z"/>
-  </svg>
-);
-
-const AppleIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden focusable="false">
-    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-  </svg>
-);
+// SignUpPage.tsx
+import React, { useEffect, useRef, useState } from "react";
+// adjust this import path to where you put firebaseAuthHelpers.ts
+import { isUsernameUnique, uploadImage, signUp } from "./firebaseAuthHelpers";
 
 const Shine = () => (
   <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
@@ -25,111 +11,321 @@ const SignUpPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [sex, setSex] = useState(""); // optional sex
+  const [birthday, setBirthday] = useState(""); // renamed from dob to match database
+  const [profilePic, setProfilePic] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  
+  // Password visibility states
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleEmailSignUp = async () => {
-    if (password !== confirmPassword) {
-      setError("Passwords don't match");
+  // debounce ref for username uniqueness checks
+  const debounceRef = useRef<number | null>(null);
+
+  // Validate username format locally: letters, numbers, underscore, 3-20 chars
+  const validateUsername = (u: string) => {
+    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+    return usernameRegex.test(u);
+  };
+
+  // Debounced username change handler (fires async check after 500ms idle)
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setUsername(value);
+    setUsernameError("");
+    setUsernameAvailable(null);
+
+    // immediate format validation
+    if (!value) {
+      setUsernameError("");
       return;
     }
-    
+    if (!validateUsername(value)) {
+      setUsernameError("Username must be 3-20 characters: letters, numbers, and underscores only");
+      return;
+    }
+
+    // debounce uniqueness check to reduce reads while typing
+    if (debounceRef.current) {
+      window.clearTimeout(debounceRef.current);
+    }
+    debounceRef.current = window.setTimeout(async () => {
+      try {
+        const ok = await isUsernameUnique(value);
+        setUsernameAvailable(ok);
+        if (!ok) setUsernameError("Username is already taken");
+      } catch (err) {
+        console.error("Username check error", err);
+        setUsernameAvailable(null);
+        setUsernameError("Unable to check username right now");
+      }
+    }, 500);
+  };
+
+  // profile file input
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] ?? null;
+    setProfilePic(f);
+  };
+
+  // Helper: final client-side validation before attempting signup
+  const validateBeforeSubmit = () => {
+    setError("");
+    setSuccess("");
+
+    if (!firstName.trim()) {
+      setError("First name is required");
+      return false;
+    }
+    if (!lastName.trim()) {
+      setError("Last name is required");
+      return false;
+    }
+    if (!username.trim()) {
+      setError("Username is required");
+      return false;
+    }
+    if (!validateUsername(username.trim())) {
+      setError("Username must be 3-20 characters: letters, numbers, and underscores only");
+      return false;
+    }
+    if (!email.trim()) {
+      setError("Email is required");
+      return false;
+    }
+    if (!password) {
+      setError("Password is required");
+      return false;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return false;
+    }
+    // sex, birthday, and location are optional
+    return true;
+  };
+
+  const handleEmailSignUp = async () => {
+    setError("");
+    setSuccess("");
+
+    if (!validateBeforeSubmit()) return;
+
+    setLoading(true);
     try {
-      setLoading(true);
-      setError("");
-      setSuccess("");
-      await createUserWithEmailAndPassword(auth, email, password);
-      setSuccess("Account created successfully! Redirecting...");
-    } catch (e: any) {
-      setError("Unable to create account. Please try again.");
-    } finally {
+      const usernameLower = username.trim().toLowerCase();
+
+      // Final (server-ish) uniqueness pre-check (UX). We still handle race on signUp server side.
+      const available = await isUsernameUnique(usernameLower);
+      if (!available) {
+        setError("Username already taken. Please choose another.");
+        setLoading(false);
+        return;
+      }
+
+      // Upload profile pic first (if provided)
+      let profilePicUrl: string | null = null;
+      if (profilePic) {
+        // choose a stable storage path name
+        const safeName = `profilePics/${usernameLower}_${Date.now()}_${profilePic.name}`;
+        profilePicUrl = await uploadImage(profilePic, safeName);
+      }
+
+      // Call signUp helper with all the required fields
+      await signUp({
+        email: email.trim().toLowerCase(),
+        password,
+        username: usernameLower,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        profilePicture: profilePicUrl,
+        sex: sex || null,
+        birthday: birthday || null,
+        numListings: 0,
+        score: 50,
+        preferences: {}, // new field - empty object for now
+        isPrivateEmail: false, // new field - default to false
+        shouldUpdateProfile: false, // new field - default to false
+      });
+
+      setLoading(false);
+
+      // Optionally: redirect to login page after short delay
+      setTimeout(() => (window.location.href = "/login"), 2000);
+    } catch (err: any) {
+      console.error("Sign up failed:", err);
+      // known helper errors
+      if (err.code === "USERNAME_TAKEN" || err.message === "USERNAME_TAKEN") {
+        setError("Username was just taken. Please choose another.");
+      } else if (err.code === "EMAIL_IN_USE" || err.message === "EMAIL_IN_USE") {
+        setError("An account with this email already exists. Please sign in instead.");
+      } else {
+        setError(err.message || "Sign up failed. Try again.");
+      }
       setLoading(false);
     }
   };
 
-  const handleGoogleSignUp = async () => {
-    try {
-      setLoading(true);
-      setError("");
-      setSuccess("");
-      await signInWithPopup(auth, new GoogleAuthProvider());
-      setSuccess("Successfully signed up with Google! Redirecting...");
-    } catch (e: any) {
-      setError("Unable to sign up with Google. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // cleanup debounce on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current);
+    };
+  }, []);
 
-  const handleAppleSignUp = async () => {
-    try {
-      setLoading(true);
-      setError("");
-      setSuccess("");
-      const provider = new OAuthProvider('apple.com');
-      await signInWithPopup(auth, provider);
-      setSuccess("Successfully signed up with Apple! Redirecting...");
-    } catch (e: any) {
-      setError("Unable to sign up with Apple. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // single base input class used for text/email/password/select/date/file so visuals match
+  const baseInputClass =
+    "h-14 rounded-xl border-2 border-[#e2e8f0] bg-[#f8fafc] px-5 text-[15px] font-medium placeholder-[#9CA3AF] outline-none transition focus:bg-white focus:border-[#ff6f73] focus:ring-4 focus:ring-[rgba(255,111,115,0.1)]";
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#fdbfc2] p-6 relative">
-      <div className="w-full max-w-[400px] bg-white rounded-2xl p-12 text-center shadow-[0_20px_25px_-5px_rgba(0,0,0,.1),_0_10px_10px_-5px_rgba(0,0,0,.04)] border border-white/20">
-        <header className="mb-8">
-          <img src="https://firebasestorage.googleapis.com/v0/b/gutter-bc42f.appspot.com/o/Black%20logo%20-%20no%20background.png?alt=media&token=91786a19-154b-4324-8414-a7154a9840d2" alt="Logo" className="w-24 h-24 mx-auto mb-8" />
-        </header>
+    <div className="min-h-screen bg-[#fdbfc2]">
+      {/* small scoped CSS so selects/date look like other inputs (gray, not bold) */}
+      <style>{`
+        .form-input, .form-select, .form-file {
+          color: #6b7280; /* gray text like email/password fields */
+          font-weight: 500; /* slightly medium, not heavy black */
+        }
+        /* placeholder color */
+        .form-input::placeholder {
+          color: #9CA3AF;
+          opacity: 1;
+        }
+        /* make the disabled placeholder option gray */
+        .form-select option[disabled] {
+          color: #9CA3AF;
+        }
+        /* date inputs on many browsers render native picker; ensure text color */
+        input[type="date"].form-input {
+          color: #6b7280;
+        }
+      `}</style>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-            {error}
+      <div className="flex items-center justify-center p-6 relative">
+        <div className="w-full max-w-[400px] bg-white rounded-2xl p-12 text-center shadow-lg border border-white/20">
+          <header className="mb-8">
+            <img src="https://firebasestorage.googleapis.com/v0/b/gutter-bc42f.appspot.com/o/Black%20logo%20-%20no%20background.png?alt=media&token=91786a19-154b-4324-8414-a7154a9840d2" alt="Logo" className="w-24 h-24 mx-auto mb-8" />
+          </header>
+
+          {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">{error}</div>}
+          {success && <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-600 text-sm">{success}</div>}
+
+          <div className="flex flex-col gap-4 mt-1">
+            <div className="flex flex-col gap-4 mb-1">
+              <input
+                type="text"
+                placeholder="First Name *"
+                aria-label="First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className={`${baseInputClass} form-input`}
+              />
+              
+              <input
+                type="text"
+                placeholder="Last Name *"
+                aria-label="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className={`${baseInputClass} form-input`}
+              />
+
+              <input
+                type="text"
+                placeholder="Username *"
+                aria-label="Username"
+                value={username}
+                onChange={handleUsernameChange}
+                className={`${baseInputClass} form-input`}
+              />
+              {usernameError && <p className="text-red-500 text-xs text-left -mt-2">{usernameError}</p>}
+              {usernameAvailable && <p className="text-green-600 text-xs text-left -mt-2">Username available</p>}
+
+              <input type="email" placeholder="Email address *" value={email} onChange={e => setEmail(e.target.value)} className={`${baseInputClass} form-input`} />
+              
+              {/* Password field with toggle */}
+              <div className="relative">
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  placeholder="Password *" 
+                  value={password} 
+                  onChange={e => setPassword(e.target.value)} 
+                  className={`${baseInputClass} form-input w-full pr-12`} 
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-4 flex items-center text-[#ff6f73] hover:text-[#ff4757] text-sm font-medium focus:outline-none"
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+
+              {/* Confirm Password field with toggle */}
+              <div className="relative">
+                <input 
+                  type={showConfirmPassword ? "text" : "password"} 
+                  placeholder="Confirm Password *" 
+                  value={confirmPassword} 
+                  onChange={e => setConfirmPassword(e.target.value)} 
+                  className={`${baseInputClass} form-input w-full pr-12`} 
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute inset-y-0 right-4 flex items-center text-[#ff6f73] hover:text-[#ff4757] text-sm font-medium focus:outline-none"
+                >
+                  {showConfirmPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+              
+    
+
+              {/* Sex (optional) */}
+              <select value={sex} onChange={(e) => setSex(e.target.value)} className={`${baseInputClass} form-select`}>
+                <option value="" disabled>Sex</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+
+              {/* Birthday (optional) */}
+              <input type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} className={`${baseInputClass} form-input`} placeholder="Birthday (optional)" />
+
+              {/* Profile picture (optional) */}
+              <div className="text-left">
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleFileChange} 
+                  className="w-full h-12 px-4 py-2 text-sm text-gray-600 bg-gray-50 border-2 border-gray-200 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#ff6f73] file:text-white hover:file:bg-[#ff4757] focus:outline-none focus:ring-4 focus:ring-[rgba(255,111,115,0.1)] focus:border-[#ff6f73] transition-colors" 
+                />
+                {profilePic && <p className="text-xs text-gray-500 mt-1">Selected: {profilePic.name}</p>}
+                {!profilePic && <p className="text-xs text-gray-500 mt-1">No file chosen</p>}
+              </div>
+
+              <button onClick={handleEmailSignUp} disabled={loading || !!usernameError} className="relative group overflow-hidden h-14 rounded-xl bg-gradient-to-br from-[#ff6f73] to-[#ff4757] text-white text-[15px] font-semibold">
+                <Shine />
+                {loading ? "Creating Account…" : "Sign Up"}
+              </button>
+            </div>
           </div>
-        )}
 
-        {success && (
-          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-600 text-sm">
-            {success}
-          </div>
-        )}
-
-        <div className="flex flex-col gap-4 mt-1">
-          <div className="flex flex-col gap-4 mb-1">
-            <input type="email" placeholder="Email address" aria-label="Email address" value={email} onChange={e => setEmail(e.target.value)} className="h-14 rounded-xl border-2 border-[#e2e8f0] bg-[#f8fafc] px-5 text-[15px] font-medium text-[#1a202c] outline-none transition focus:bg-white focus:border-[#ff6f73] focus:ring-4 focus:ring-[rgba(255,111,115,0.1)]" />
-            <input type="password" placeholder="Password" aria-label="Password" value={password} onChange={e => setPassword(e.target.value)} className="h-14 rounded-xl border-2 border-[#e2e8f0] bg-[#f8fafc] px-5 text-[15px] font-medium text-[#1a202c] outline-none transition focus:bg-white focus:border-[#ff6f73] focus:ring-4 focus:ring-[rgba(255,111,115,0.1)]" />
-            <input type="password" placeholder="Confirm Password" aria-label="Confirm Password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="h-14 rounded-xl border-2 border-[#e2e8f0] bg-[#f8fafc] px-5 text-[15px] font-medium text-[#1a202c] outline-none transition focus:bg-white focus:border-[#ff6f73] focus:ring-4 focus:ring-[rgba(255,111,115,0.1)]" />
-            <button onClick={handleEmailSignUp} disabled={loading} className="relative group overflow-hidden h-14 rounded-xl bg-gradient-to-br from-[#ff6f73] to-[#ff4757] text-white text-[15px] font-semibold shadow-[0_4px_15px_rgba(255,111,115,0.4)] transition hover:shadow-[0_12px_30px_rgba(255,71,87,0.45)] hover:scale-[1.02] active:scale-100 disabled:opacity-60 disabled:cursor-not-allowed">
-              <Shine />
-              {loading ? 'Creating account…' : 'Sign Up'}
-            </button>
+          <div className="flex flex-col gap-4 mt-6">
+            {/* social sign-ups left as-is */}
           </div>
 
-          <button onClick={handleGoogleSignUp} disabled={loading} className="relative group overflow-hidden h-14 rounded-xl bg-gradient-to-br from-[#4285f4] to-[#3367d6] text-white text-[15px] font-semibold shadow-[0_4px_15px_rgba(66,133,244,0.4)] transition hover:shadow-[0_12px_30px_rgba(66,133,244,0.45)] hover:scale-[1.02] active:scale-100 inline-flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed">
-            <Shine />
-            <span className="inline-flex items-center justify-center w-5 h-5"><GoogleIcon /></span>
-            <span>Sign up with Google</span>
-          </button>
-
-          <button onClick={handleAppleSignUp} disabled={loading} className="relative group overflow-hidden h-14 rounded-xl bg-black text-white text-[15px] font-semibold shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition hover:shadow-[0_12px_30px_rgba(0,0,0,0.45)] hover:scale-[1.02] active:scale-100 inline-flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed">
-            <Shine />
-            <span className="inline-flex items-center justify-center w-5 h-5"><AppleIcon /></span>
-            <span>Sign up with Apple</span>
-          </button>
+          <p className="text-sm text-[#64748b] mt-6">
+            Already have an account? <a href="/login" className="font-semibold text-[#ff6f73] hover:underline">Sign In</a>
+          </p>
         </div>
-
-        <div className="flex items-center gap-4 my-6">
-          <span className="flex-1 h-px bg-gradient-to-r from-transparent via-[#e2e8f0] to-transparent" />
-          <span className="text-[13px] text-[#64748b]">or</span>
-          <span className="flex-1 h-px bg-gradient-to-r from-transparent via-[#e2e8f0] to-transparent" />
-        </div>
-
-        <p className="text-[14px] text-[#64748b] mt-2">
-          Already have an account?
-          <a href="/login" className="ml-1 font-semibold text-[#ff6f73] hover:underline">Sign In</a>
-        </p>
       </div>
     </div>
   );

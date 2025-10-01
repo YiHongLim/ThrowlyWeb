@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Modal, Input, message, Space, Tooltip } from 'antd';
 import { ShareAltOutlined, CopyOutlined, WhatsAppOutlined, FacebookOutlined, TwitterOutlined, MailOutlined } from '@ant-design/icons';
+import {useNavigate} from "react-router";
+import {getAuth} from "firebase/auth";
 
 type ShareCampaignButtonProps = {
     campaignId: string;
@@ -9,8 +11,10 @@ type ShareCampaignButtonProps = {
 const ShareCampaignButtonWithModal: React.FC<ShareCampaignButtonProps> = ({ campaignId }) => {
     const [visible, setVisible] = useState(false);
     const url = `${window.location.origin}/campaign-page-details/${campaignId}`;
+    const navigate = useNavigate();
 
-    const handleCopyClipboard = () => {
+    const handleCopyClipboard
+        = () => {
         navigator.clipboard.writeText(url).then(() => {
             message.success('Campaign link copied to clipboard!');
 
@@ -42,7 +46,15 @@ const ShareCampaignButtonWithModal: React.FC<ShareCampaignButtonProps> = ({ camp
         },
     ];
 
-    const handleOpen = () => setVisible(true);
+    const handleOpen = () => {
+        const auth = getAuth();
+        const currentUser = auth.currentUser;
+        if(!currentUser) {
+            navigate('/login');
+            return;
+        }
+        setVisible(true);
+    }
     const handleClose = () => setVisible(false);
 
     const handleNativeShare = async () => {
