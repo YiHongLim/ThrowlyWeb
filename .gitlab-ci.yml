@@ -10,7 +10,9 @@ cache:
 
 install:
   stage: install
-  image: node:18
+  image: node:22-alpine
+  tags:
+    - yihong_tag
   script:
     - npm ci
   artifacts:
@@ -19,7 +21,9 @@ install:
 
 test:
   stage: test
-  image: node:18
+  image: node:22-alpine
+  tags:
+    - yihong_tag
   script:
     - npm run test -- --watchAll=false --coverage
   artifacts:
@@ -31,7 +35,9 @@ test:
 
 build:
   stage: build
-  image: node:18
+  image: node:22-alpine
+  tags:
+    - yihong_tag
   script:
     - npm run build
   artifacts:
@@ -41,6 +47,8 @@ build:
 deploy:
   stage: deploy
   image: alpine:latest
+  tags:
+    - yihong_tag
   script:
     - echo "Deployment step - customize this to your deploy process"
   when: manual
