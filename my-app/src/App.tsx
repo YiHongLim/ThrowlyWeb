@@ -10,7 +10,9 @@ import CampaignPageDetails from './pages/Go_Furnish_Me/CampaignPageDetails';
 import GoFurnishMePage from './pages/Go_Furnish_Me/GoFurnishMePage';
 import  Home  from './pages/Home/Home';
 import RootLayout from './components/RootLayout';
+import AboutUs from './pages/Home/About_us';
 import './output.css';
+import FAQ from './pages/Home/FAQ';
 import DonateNowForm from "./components/go_furnish_me/DonateNowForm";
 
 function App() {
@@ -27,6 +29,8 @@ function App() {
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/listings" element={<ProductListing />} />
                 <Route path="/listings/:id" element={<ProductDetail />} />
+                <Route path="/about" element={<AboutUs />} />
+                <Route path="/FAQ" element={<FAQ />} />
             </Routes>
         </RootLayout>
     );
