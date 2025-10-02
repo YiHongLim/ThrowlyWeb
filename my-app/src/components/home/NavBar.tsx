@@ -145,7 +145,7 @@ const NavBar: React.FC = () => {
         )}
         <Button
           type="primary"
-          style={{ backgroundColor: "#ff6b00", border: "none" }}
+          style={{ backgroundColor: "#fc5c65", border: "none" }}
         >
           Post
         </Button>
