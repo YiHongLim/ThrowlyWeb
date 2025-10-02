@@ -38,7 +38,7 @@ export function ProductDetail() {
                             <img
                                 src={product.images[0].url || '/fallback.jpg'}
                                 alt={product.title}
-                                className="w-full h-96 object-contain"
+                                className="w-full h-96 object-contain rounded-lg border border-gray-200"
                             />
                         </div>
 
