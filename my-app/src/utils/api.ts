@@ -1,11 +1,11 @@
 const getLLMPrice = async (
     imageUrls: any,
     description: any,
-    latitude: any,
-    longitude: any,
+    // latitude: any,
+    // longitude: any,
     username: any,
     model: any,
-    { radiusInKm = 1000, searchDatabase = true } = {}
+    { radiusInKm = 1000, searchDatabase = false } = {}
 ) => {
     const response = await fetch(
         "https://estimatelistingprice-cwjz6kyz6q-uc.a.run.app",
@@ -15,8 +15,8 @@ const getLLMPrice = async (
             body: JSON.stringify({
                 imageUrls,
                 description,
-                latitude,
-                longitude,
+                // latitude,
+                // longitude,
                 radiusInKm,
                 username, // required for Firestore username gate
                 searchDatabase, // optional, default true
