@@ -6,14 +6,14 @@ import AuthPage from './pages/authpage';
 import SignUpPage from './pages/SignUpPage';
 import CartPage from './pages/CartPage';
 import CampaignPage from './pages/Go_Furnish_Me/CampaignPage';
-import CampaignPageDetails from './pages/Go_Furnish_Me/CampaignPageDetails';
+import CampaignDetailsPage from './pages/Go_Furnish_Me/CampaignDetailsPage';
 import GoFurnishMePage from './pages/Go_Furnish_Me/GoFurnishMePage';
 import  Home  from './pages/Home/Home';
 import RootLayout from './components/RootLayout';
 import AboutUs from './pages/Home/About_us';
 import './output.css';
+import DonationListPage from "./pages/Go_Furnish_Me/DonationListPage";
 import FAQ from './pages/Home/FAQ';
-import DonateNowForm from "./components/go_furnish_me/DonateNowForm";
 
 function App() {
     return (
@@ -22,8 +22,9 @@ function App() {
                 <Route path="/" element={<Home />} />
                 
                 <Route path="/go-furnish-me" element={<GoFurnishMePage />} />
-                <Route path="/campaign-page-details/:id" element={<CampaignPageDetails />} />
+                <Route path="/campaign-page-details/:id" element={<CampaignDetailsPage />} />
                 <Route path="/campaign-page" element={<CampaignPage />} />
+                <Route path="/campaign-donation-list-page/:id" element={<DonationListPage />} />
                 <Route path="/login" element={<AuthPage />} />
                 <Route path="/signup" element={<SignUpPage />} />
                 <Route path="/cart" element={<CartPage />} />
