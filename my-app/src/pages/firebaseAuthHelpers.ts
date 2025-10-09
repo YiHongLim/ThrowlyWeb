@@ -86,7 +86,7 @@ export const uploadImage = async (uri: string | File, imageName: string): Promis
  * - If username collision or other failure occurs, deletes the created Auth user (cleanup)
  *
  * userObject must include at minimum: { email, password, username, firstName, lastName }
- * Optional: profilePicture (url), sex, birthday, location, numListings, score, preferences, isPrivateEmail, shouldUpdateProfile
+ * Optional: profilePicture (url), location, numListings, score, preferences, isPrivateEmail, shouldUpdateProfile
  */
 export const signUp = async (userObject: {
   email: string;
@@ -95,8 +95,6 @@ export const signUp = async (userObject: {
   firstName: string;
   lastName: string;
   profilePicture?: string | null;
-  sex?: string | null;
-  birthday?: string | null;
   location?: string | null;
   numListings?: number;
   score?: number;
@@ -124,8 +122,6 @@ export const signUp = async (userObject: {
       firstName: userObject.firstName.trim(),
       lastName: userObject.lastName.trim(),
       profilePicture: userObject.profilePicture || "",
-      sex: userObject.sex || null,
-      birthday: userObject.birthday || "",
       location: userObject.location || null,
       geohash: null, // will be calculated later if needed
       numListings: userObject.numListings ?? 0,

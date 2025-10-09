@@ -14,8 +14,6 @@ const SignUpPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [sex, setSex] = useState(""); // optional sex
-  const [birthday, setBirthday] = useState(""); // renamed from dob to match database
   const [profilePic, setProfilePic] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -109,7 +107,7 @@ const SignUpPage: React.FC = () => {
       setError("Passwords do not match");
       return false;
     }
-    // sex, birthday, and location are optional
+    // location is optional
     return true;
   };
 
@@ -147,8 +145,6 @@ const SignUpPage: React.FC = () => {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         profilePicture: profilePicUrl,
-        sex: sex || null,
-        birthday: birthday || null,
         numListings: 0,
         score: 50,
         preferences: {}, // new field - empty object for now
@@ -285,19 +281,6 @@ const SignUpPage: React.FC = () => {
                   {showConfirmPassword ? "Hide" : "Show"}
                 </button>
               </div>
-              
-    
-
-              {/* Sex (optional) */}
-              <select value={sex} onChange={(e) => setSex(e.target.value)} className={`${baseInputClass} form-select`}>
-                <option value="" disabled>Sex</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
-
-              {/* Birthday (optional) */}
-              <input type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} className={`${baseInputClass} form-input`} placeholder="Birthday (optional)" />
 
               {/* Profile picture (optional) */}
               <div className="text-left">
