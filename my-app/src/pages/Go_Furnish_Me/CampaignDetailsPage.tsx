@@ -3,7 +3,7 @@ import { Row, Col, Card, Typography, Button, Progress, Avatar, Divider, Tag } fr
 import {doc, getDoc} from "firebase/firestore";
 import {db} from "../../firebase";
 import {useParams} from "react-router";
-import {CampaignType} from "../../types";
+import {CampaignType} from "../../utils/types";
 import DonateNowButton from "../../components/go_furnish_me/DonateNowButton";
 import {withAuthProtection} from "../../components/WithAuthProtection";
 import shareCampaignButton from "../../components/go_furnish_me/ShareCampaignButton";
@@ -11,7 +11,7 @@ import ShareCampaignButton from "../../components/go_furnish_me/ShareCampaignBut
 
 const { Title, Paragraph, Text } = Typography;
 
-export default function CampaignPageDetails() {
+export default function CampaignDetailsPage() {
     const { id } = useParams();
     const [campaign, setCampaign] = useState<CampaignType | null>(null);
 
@@ -127,7 +127,7 @@ export default function CampaignPageDetails() {
                                     <li><Text strong>Anonymous: </Text> $5000 - Top donation</li>
                                     <li><Text strong>{campaign.organizer}: </Text> $100 - First donation</li>
                                 </ul>
-                                <Button type="link" style={{ padding: 0 }}>See all</Button>
+                                <Button type="link" href={`/campaign-donation-list-page/${campaign.id}`} style={{ padding: 0 }}>See all</Button>
                             </div>
                         </Card>
                     </Col>
