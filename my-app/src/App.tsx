@@ -10,14 +10,17 @@ import CampaignDetailsPage from './pages/Go_Furnish_Me/CampaignDetailsPage';
 import GoFurnishMePage from './pages/Go_Furnish_Me/GoFurnishMePage';
 import  Home  from './pages/Home/Home';
 import RootLayout from './components/RootLayout';
+import AboutUs from './pages/Home/About_us';
 import './output.css';
 import DonationListPage from "./pages/Go_Furnish_Me/DonationListPage";
+import FAQ from './pages/Home/FAQ';
 
 function App() {
     return (
         <RootLayout>
             <Routes>
                 <Route path="/" element={<Home />} />
+                
                 <Route path="/go-furnish-me" element={<GoFurnishMePage />} />
                 <Route path="/campaign-page-details/:id" element={<CampaignDetailsPage />} />
                 <Route path="/campaign-page" element={<CampaignPage />} />
@@ -27,6 +30,8 @@ function App() {
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/listings" element={<ProductListing />} />
                 <Route path="/listings/:id" element={<ProductDetail />} />
+                <Route path="/about" element={<AboutUs />} />
+                <Route path="/FAQ" element={<FAQ />} />
             </Routes>
         </RootLayout>
     );

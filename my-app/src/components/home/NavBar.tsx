@@ -82,16 +82,29 @@ const NavBar: React.FC = () => {
       }}
     >
       {/* Left: Logo */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      <button
+        onClick={() => navigate("/")}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          background: "none",
+          border: "none",
+          padding: 0,
+          cursor: "pointer"
+        }}
+        aria-label="Go to home"
+      >
         <img
           src={gutter}
           alt="Throwly Logo"
           style={{ height: "32px" }}
+          className={"rounded-md"}
         />
         <Title level={4} style={{ margin: 0 }}>
           Throwly
         </Title>
-      </div>
+      </button>
 
       {/* Center Nav Links */}
       <Menu
@@ -107,7 +120,12 @@ const NavBar: React.FC = () => {
           <a href="/campaign-page">Go Furnish Me</a>
         </Menu.Item>
         <Menu.Item key="overview">Overview</Menu.Item>
-        <Menu.Item key="about">About Throwly</Menu.Item>
+        <Menu.Item key="about">
+          <a href="/about">About Throwly</a>
+        </Menu.Item>
+        <Menu.Item key="faq">
+          <a href="/faq">FAQ</a>
+        </Menu.Item>
         <Menu.Item key="cart">
           <a href="/cart">Cart</a>
         </Menu.Item>
