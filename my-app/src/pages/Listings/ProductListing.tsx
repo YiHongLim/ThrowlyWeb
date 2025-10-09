@@ -1,31 +1,65 @@
 import {useEffect, useState} from "react";
 import {ProductCard} from "../../components/listing/ProductCard";
-import {Layout, Card, Pagination, Skeleton} from "antd";
+import {Layout, Card, Pagination, Button} from "antd";
 import {ProductSidebar} from "../../components/listing/ProductSideBar";
-import {fetchListings} from "../../data/listings";
-import {ProductType} from "../../types";
+import {fetchListings, fetchCategories} from "../../data/listings";
+import {ProductType,CategoryType} from "../../types";
 import SearchBar from "../../components/home/SearchBar";
-import bgImage from "../../assets/images/blob-scene-haikei.png"
+import { useSearchParams } from "react-router-dom";
+import { ClearOutlined } from "@ant-design/icons"; 
 
 const {Sider, Content} = Layout;
 
 export function ProductListing() {
+    const [searchParams, setSearchParams] = useSearchParams();
     const [products, setProduct] = useState<ProductType[]>([]);
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [priceSort, setPriceSort] = useState<string>("");
     const [currentPage, setCurrentPage] = useState(1);
     const [onResults, setOnResults] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [categories, setCategories] = useState<CategoryType[]>([]);
     const ITEMS_PER_PAGE = 12;
+
+    const searchQuery = searchParams.get('search') || '';
+
+    const resetSearch = () => {
+        setSearchParams({}); // Clear all URL parameters
+        setOnResults([]); // Clear search results
+    };
 
     useEffect(() => {
         const fetchData = async () => {
-            const listings = await fetchListings();
+            const [listings, categoryData ]= await Promise.all([fetchListings(), fetchCategories()]);
+            setCategories(categoryData);
             setProduct(listings);
             setLoading(false);
         };
         fetchData();
     }, []);
+
+    useEffect(() => {
+        if (searchQuery && products.length > 0) {
+            const queryLowerCase = searchQuery.toLowerCase();
+            const filteredItems = products.filter(product => 
+                product.title && product.title.toLowerCase().includes(queryLowerCase)
+            );
+            setOnResults(filteredItems);
+        } else {
+            setOnResults([]);
+        }
+    }, [searchQuery, products]);
+
+
+    const priceOnlyProducts = products.filter(
+        (product) => product.price !== undefined && product.freePrice === undefined
+    );
+    const freePriceProducts = products.filter(
+        (product) => product.freePrice !== undefined
+    );
+    console.log("free: ",freePriceProducts);
+    console.log("not free: ",priceOnlyProducts);
+
 
     // Use search results if present; otherwise fall back to all products
     const baseList: ProductType[] =
@@ -35,9 +69,15 @@ export function ProductListing() {
     let filteredProducts = baseList.filter((product) => {
         const matchesCategory =
             selectedCategories.length === 0 ||
-            selectedCategories.includes((product as any)?.category ?? "");
+            selectedCategories.includes(product.categoryId); // Use categoryId instead of category
         return matchesCategory;
     });
+
+    const categoryOptions = categories.map(cat => ({
+        label: cat.name,
+        value: cat.id
+    }));
+
 
     // Sort (avoid mutating state arrays)
     if (priceSort === "low-to-high") {
@@ -68,6 +108,7 @@ export function ProductListing() {
                             onCategoryChange={setSelectedCategories}
                             priceSort={priceSort}
                             onPriceSortChange={setPriceSort}
+                            categoriesName={categoryOptions}
                         />
                     </Sider>
                 </Card>
@@ -78,15 +119,32 @@ export function ProductListing() {
                     <div className="mx-auto px-4 py-8">
 
 
-                        <div className="mb-8">
-                            <h1 className="text-4xl font-bold mb-4" style={{color: '#fc5c65'}}>Listings</h1>
+                        <div className="text-center">
                             <p className="text-lg text-gray-600">Search and browse our listings</p>
                         </div>
+                        {searchQuery && (
+                            <div className="text-center mb-4">
+                                <div className="flex items-center justify-center gap-4">
+                                    <p className="text-sm text-gray-500">
+                                        Showing results for: <strong>"{searchQuery}"</strong>
+                                    </p>
+                                    <Button 
+                                        type="default" 
+                                        size="small"
+                                        icon={<ClearOutlined />}
+                                        onClick={resetSearch}
+                                        style={{color: '#fc5c65', borderColor: '#fc5c65'}}
+                                    >
+                                        Clear Search
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
 
                         <div>
                             <SearchBar onResults={setOnResults}/>
                         </div>
-                        <div className="mt-8">
+                        <div className="mt-8 mb-8">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                 {currentProducts.map((p: ProductType) => (
                                     <ProductCard key={p.id} product={p}/>

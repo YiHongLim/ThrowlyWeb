@@ -3,12 +3,15 @@ import {Row, Col, Button, Input} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
 import {collection, getDocs} from "firebase/firestore";
 import {db} from "../../firebase";
+import { useNavigate } from "react-router-dom";
 
 type SearchBarProps = {
-    onResults: (results: any[]) => void;
+    onResults?: (results: any[]) => void;
+    redirectOnSearch?: boolean;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({onResults}) => {
+const SearchBar: React.FC<SearchBarProps> = ({onResults, redirectOnSearch = false}) => {
+        const navigate = useNavigate();
         const [listings, setListings] = useState([]);
         const [error, setError] = useState(false);
         const [message, setMessage] = useState("");
@@ -21,11 +24,11 @@ const SearchBar: React.FC<SearchBarProps> = ({onResults}) => {
 
         const performSearch = async (query: any) => {
             // Implement search functionality here
-            if (!query) return onResults([]);
+            if (!query && onResults) return onResults([]);
 
             setError(false);
             setMessage("");
-
+            
             try {
                 console.log("Performing search for:", query);
                 const queryLowerCase = query.toLowerCase();
@@ -58,12 +61,20 @@ const SearchBar: React.FC<SearchBarProps> = ({onResults}) => {
                     setMessage("No matching items found");
                 }
 
-                onResults(filteredItems);
+                if (redirectOnSearch) {
+                    navigate(`/listings?search=${encodeURIComponent(query)}`);
+                } else if (onResults) {
+                    // Clear previous results first, then set new ones
+                    onResults([]);
+                    setTimeout(() => onResults(filteredItems), 100);
+                }
             } catch (error) {
                 console.error("Search error:", error);
                 setError(true);
                 setMessage("An error occurred while searching");
-                onResults([]);
+                if(onResults) {
+                    onResults([]);
+                }
             }
         }
 
@@ -84,41 +95,9 @@ const SearchBar: React.FC<SearchBarProps> = ({onResults}) => {
                         onPressEnter={() => performSearch(searchValue)}
                         style={{color: '#fc5c65'}}
                     ></Input>
-                </div>
 
-                {/* Popular Keywords */}
-                {/*<Row*/}
-                {/*  style={{*/}
-                {/*    marginTop: "8px",*/}
-                {/*    gap: "16px",*/}
-                {/*    fontSize: "14px",*/}
-                {/*    color: "#555",*/}
-                {/*  }}*/}
-                {/*>*/}
-                {/*  {[*/}
-                {/*    "Popular",*/}
-                {/*    "ikea",*/}
-                {/*    "lululemon",*/}
-                {/*    "playstation",*/}
-                {/*    "patagonia",*/}
-                {/*    "yeti cooler",*/}
-                {/*    "xbox",*/}
-                {/*    "nintendo switch",*/}
-                {/*    "samsung",*/}
-                {/*    "sofa",*/}
-                {/*    "dresser",*/}
-                {/*    "iphone",*/}
-                {/*    "coffee table",*/}
-                {/*    "tv",*/}
-                {/*    "couch",*/}
-                {/*    "free",*/}
-                {/*    "desk",*/}
-                {/*  ].map((word) => (*/}
-                {/*    <span key={word} style={{ cursor: "pointer" }}>*/}
-                {/*      {word}*/}
-                {/*    </span>*/}
-                {/*  ))}*/}
-                {/*</Row>*/}
+
+                </div>
             </div>
         );
     }
