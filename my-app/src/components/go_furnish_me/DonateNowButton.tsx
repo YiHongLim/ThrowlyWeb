@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from 'antd';
 import DonateNowForm from "./DonateNowForm";
-import {CampaignType} from "../../types";
+import {CampaignType} from "../../utils/types";
 import {getAuth} from "firebase/auth";
 import {useNavigate} from "react-router";
 
