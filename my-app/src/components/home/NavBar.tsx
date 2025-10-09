@@ -112,9 +112,11 @@ const NavBar: React.FC = () => {
         defaultSelectedKeys={[]}
         style={{ flex: 1, justifyContent: "center", borderBottom: "none" }}
       >
-        <Menu.Item key="shop">Shop Local</Menu.Item>
+        <Menu.Item key="shop">
+          <a href={"/listings"}>Shop Local</a>
+        </Menu.Item>
         <Menu.Item key="categories">
-          <a href={"/listings"}>Categories</a>
+          <a href="/categories">Categories</a>
           </Menu.Item>
         <Menu.Item key="furnish">
           <a href="/campaign-page">Go Furnish Me</a>
