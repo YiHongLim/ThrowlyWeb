@@ -16,17 +16,6 @@ type DonateNowFormProps = {
 };
 
 const { TextArea } = Input;
-
-async function fetchUsername(userId: string) {
-    const userDocRef = doc(db, "Users", userId);
-    const userDocSnap = await getDoc(userDocRef);
-    if (userDocSnap.exists()) {
-        return userDocSnap.data().username;
-    } else {
-        return null;
-    }
-}
-
 // TEMP: Replace these with real values as needed
 const latitude = 37.7749;   // e.g., from geolocation or props
 const longitude = -122.4194;  // e.g., from geolocation or props
@@ -36,6 +25,7 @@ const model = "claude-3-haiku-20240307"; // or your target model
 const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubmit, campaignId }) => {
     const [form] = Form.useForm();
     const [imageUrls, setImageUrls] = useState<string[]>([]);
+    const [title, setTitle] = useState<string>();
     const [description, setDescription] = useState('');
     const [estimatedAmount, setEstimatedAmount] = useState(null);
     const [priceExplanation, setPriceExplanation] = useState(null);
@@ -51,7 +41,6 @@ const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubm
     const handleFinish = async(values:any) => {
         try {
             let mediaUrl = null;
-            const username = await fetchUsername(userId!);
 
             if (values.media && values.media.length > 0) {
                 const file = values.media[0].originFileObj;
@@ -61,12 +50,12 @@ const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubm
             }
 
             const docRef = await addDoc(collection(db, "CampaignDonations"), {
-                username: username,
                 ...values,
-                amount: estimatedAmount,
+                amount: Number(estimatedAmount),
                 media: mediaUrl,
                 created_at: serverTimestamp(),
-                campaignId
+                campaignId,
+                userId: userId,
             })
             setImageUrls([]);
             setDescription('');
@@ -91,6 +80,9 @@ const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubm
             setUploading(false);
         } else if ('media' in changed && (!allValues.media || allValues.media.length === 0)) {
             setImageUrls([]);
+        }
+        if ('title' in changed) {
+            setTitle(allValues.title);
         }
         if ('description' in changed) {
             setDescription(allValues.description || '');
@@ -167,14 +159,15 @@ const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubm
                         <p className={"ant-upload-text"}>Click or drag file to this area to upload your donation item</p>
                     </Upload.Dragger>
                 </Form.Item>
-
+                <Form.Item label="Title" name={"title"}>
+                    <TextArea rows={1} placeholder={"Title"} />
+                </Form.Item>
                 <Form.Item
                     label="Description"
                     name="description"
                 >
                     <TextArea rows={2} placeholder="Describe item(s), quantity, brand, condition, etc." />
                 </Form.Item>
-
                 {
                     <div> Points </div>
                 }
