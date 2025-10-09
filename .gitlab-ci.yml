@@ -1,56 +1,11 @@
-stages:
-  - install
-  - test
-  - build
-  - deploy
+on:
+  push:
+    branches: [main]
 
-cache:
-  paths:
-    - node_modules/
-
-install:
-  stage: install
-  image: node:22-alpine
-  tags:
-    - yihong_tag
-  script:
-    - npm ci
-  artifacts:
-    paths:
-      - node_modules/
-
-test:
-  stage: test
-  image: node:22-alpine
-  tags:
-    - yihong_tag
-  script:
-    - npm run test -- --watchAll=false --coverage
-  artifacts:
-    reports:
-      junit: junit.xml
-    paths:
-      - coverage/
-  allow_failure: false
-
-build:
-  stage: build
-  image: node:22-alpine
-  tags:
-    - yihong_tag
-  script:
-    - npm run build
-  artifacts:
-    paths:
-      - build/
-
-deploy:
-  stage: deploy
-  image: alpine:latest
-  tags:
-    - yihong_tag
-  script:
-    - echo "Deployment step - customize this to your deploy process"
-  when: manual
-  only:
-    - main
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - run: npm-install
+    - run: npm-run-build
+    - run: npm test
