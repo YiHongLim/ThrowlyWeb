@@ -879,6 +879,12 @@
   .aspect-square { aspect-ratio: 1 / 1; }
 }
 
+
+
+.ant-input:hover, .ant-input:focus {
+  border-color: #fc5c65 !important;
+  box-shadow: 0 0 0 2px rgba(252, 92, 101, 0.2);
+}
 /* === Hover utilities for buttons === */
 @layer utilities {
   .hover\:shadow-md {

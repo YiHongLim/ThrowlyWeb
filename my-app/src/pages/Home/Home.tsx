@@ -7,6 +7,7 @@ const { Content, Footer } = Layout;
 const { Title, Text } = Typography;
 
 export default function Home() {
+    const [onResults, setOnResults] = React.useState<any[]>([]);
   const categories = [
     { name: "Electronics & Appliances", img: electronics },
     { name: "Furniture", img: furniture },
@@ -21,7 +22,7 @@ export default function Home() {
       {/* Top Navigation */}
 
       {/* Search Bar */}
-      <SearchBar />
+      <SearchBar redirectOnSearch={true} />
 
       {/* Categories Section */}
       <Content style={{ padding: "40px 50px", textAlign: "center" }}>

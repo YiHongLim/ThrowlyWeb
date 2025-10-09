@@ -35,9 +35,16 @@ export type ProductType = {
     location: locationProps;
     points:number;
     price: number;
+    freePrice:number | 0;
     searchKeywords: string[];
     size: string;
     tagname:string;
     title: string;
     userId: string;
+}
+
+export type CategoryType = {
+    id: string;
+    imageUrl: string;
+    name: string;
 }
