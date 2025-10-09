@@ -14,6 +14,7 @@ import AboutUs from './pages/Home/About_us';
 import './output.css';
 import DonationListPage from "./pages/Go_Furnish_Me/DonationListPage";
 import FAQ from './pages/Home/FAQ';
+import Categories from './pages/Categories/Category';
 
 function App() {
     return (
@@ -30,6 +31,7 @@ function App() {
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/listings" element={<ProductListing />} />
                 <Route path="/listings/:id" element={<ProductDetail />} />
+                <Route path="/categories" element={<Categories />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/FAQ" element={<FAQ />} />
             </Routes>

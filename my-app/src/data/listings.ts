@@ -1,6 +1,6 @@
 import {collection, getDocs, getDoc,doc ,where,query} from "firebase/firestore";
 import {db} from "../firebase";
-import {ProductType} from "../types";
+import {ProductType,CategoryType} from "../types";
 
 export async function fetchListings(){
     const productCol = collection(db, "MYCollection");
@@ -22,4 +22,14 @@ export async function fetchSpecificListing(id: string) {
       ...docSnap.data()
     };
     return product;
+}
+
+export async function fetchCategories(){
+    const categoriesCol = collection(db, "Categories");
+    const categorySnapShot = await getDocs(categoriesCol);
+    const categoryList = categorySnapShot.docs.map(doc => ({
+        id:doc.id,
+        ...doc.data()
+    } as CategoryType));
+    return categoryList;
 }
