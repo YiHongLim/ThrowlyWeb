@@ -21,7 +21,6 @@ function App() {
         <RootLayout>
             <Routes>
                 <Route path="/" element={<Home />} />
-                
                 <Route path="/go-furnish-me" element={<GoFurnishMePage />} />
                 <Route path="/campaign-page-details/:id" element={<CampaignDetailsPage />} />
                 <Route path="/campaign-page" element={<CampaignPage />} />
