@@ -11,6 +11,7 @@ export type CampaignType = {
     goal: number;
     story: string;
     organizerAvatar?: string;
+    userId: string;
 }
 
 export type DonationItem = {
@@ -20,8 +21,8 @@ export type DonationItem = {
     title: string;
     amount: number;
     description: string;
+    isPublic: boolean;
     campaignId: string;
-    note: string;
     firstName: string;
     lastName: string;
 };
