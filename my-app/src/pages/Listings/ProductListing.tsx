@@ -21,6 +21,7 @@ export function ProductListing() {
     const [loading, setLoading] = useState(true);
     const [categories, setCategories] = useState<CategoryType[]>([]);
     const ITEMS_PER_PAGE = 12;
+    const [priceFilter, setPriceFilter] = useState<string>("all");
 
     const searchQuery = searchParams.get('search') || '';
 
@@ -66,14 +67,27 @@ export function ProductListing() {
     const baseList: ProductType[] =
         (onResults?.length ? onResults : products) as ProductType[];
 
-    // Filters (category, etc.)
+
+    // Filters (category and price type)
     let filteredProducts = baseList.filter((product) => {
         const matchesCategory =
             selectedCategories.length === 0 ||
-            selectedCategories.includes(product.categoryId); // Use categoryId instead of category
-        return matchesCategory;
-    });
+            selectedCategories.includes(product.categoryId);
 
+        const matchesPriceFilter = (() => {
+            switch (priceFilter) {
+                case "free":
+                    return product.freePrice !== undefined;
+                case "pay":
+                    return product.freePrice === undefined && product.price !== undefined;
+                case "all":
+                default:
+                    return true;
+            }
+        })();
+
+        return matchesCategory && matchesPriceFilter;
+    });
     const categoryOptions = categories.map(cat => ({
         label: cat.name,
         value: cat.id
@@ -99,6 +113,11 @@ export function ProductListing() {
         setCurrentPage(1);
     }, [selectedCategories, priceSort, onResults]);
 
+    // Reset to first page when filters or search results change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedCategories, priceSort, priceFilter, onResults]);
+
     // map selected category ids -> chip data
     const selectedCategoryChips = selectedCategories
         .map(id => {
@@ -114,6 +133,7 @@ export function ProductListing() {
     const clearAllFilters = () => {
         setSelectedCategories([]);
         setPriceSort("");
+        setPriceFilter("all"); // Reset to default
     };
 
     return (
@@ -126,6 +146,8 @@ export function ProductListing() {
                             onCategoryChange={setSelectedCategories}
                             priceSort={priceSort}
                             onPriceSortChange={setPriceSort}
+                            priceFilter={priceFilter}
+                            onPriceFilterChange={setPriceFilter}
                             categoriesName={categoryOptions}
                         />
                     </Sider>

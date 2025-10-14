@@ -39,10 +39,10 @@ export function FilterChips({
                             alignItems: "center",
                             gap: 10,
                             padding: "2px 10px",
-                            background: "rgb(0,0,0)",
+                            background: "#fc5c65",
                             color: "rgb(255, 255, 255)",
                             fontSize: 12,
-                            border: "1px solid rgb(0, 0, 0)",
+                            border: "1px solid #fc5c65",
                         }}
                     >
                         <span>{chip.label}</span>
