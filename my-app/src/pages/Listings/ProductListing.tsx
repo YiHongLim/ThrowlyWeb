@@ -1,15 +1,15 @@
-import {useEffect, useState} from "react";
-import {ProductCard} from "../../components/listing/ProductCard";
-import {Layout, Card, Pagination, Button} from "antd";
-import {ProductSidebar} from "../../components/listing/ProductSideBar";
-import {fetchListings, fetchCategories} from "../../data/listings";
-import {ProductType,CategoryType} from "../../types";
+import { useEffect, useState } from "react";
+import { ProductCard } from "../../components/listing/ProductCard";
+import { Layout, Card, Pagination, Button } from "antd";
+import { ProductSidebar } from "../../components/listing/ProductSideBar";
+import { fetchListings, fetchCategories } from "../../data/listings";
+import { ProductType, CategoryType } from "../../types";
 import SearchBar from "../../components/home/SearchBar";
 import { useSearchParams } from "react-router-dom";
-import { ClearOutlined } from "@ant-design/icons"; 
+import { ClearOutlined } from "@ant-design/icons";
 import { FilterChips } from "../../components/listing/FilterChip";
 
-const {Sider, Content} = Layout;
+const { Sider, Content } = Layout;
 
 export function ProductListing() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -31,7 +31,7 @@ export function ProductListing() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const [listings, categoryData ]= await Promise.all([fetchListings(), fetchCategories()]);
+            const [listings, categoryData] = await Promise.all([fetchListings(), fetchCategories()]);
             setCategories(categoryData);
             setProduct(listings);
             setLoading(false);
@@ -42,7 +42,7 @@ export function ProductListing() {
     useEffect(() => {
         if (searchQuery && products.length > 0) {
             const queryLowerCase = searchQuery.toLowerCase();
-            const filteredItems = products.filter(product => 
+            const filteredItems = products.filter(product =>
                 product.title && product.title.toLowerCase().includes(queryLowerCase)
             );
             setOnResults(filteredItems);
@@ -58,8 +58,8 @@ export function ProductListing() {
     const freePriceProducts = products.filter(
         (product) => product.freePrice !== undefined
     );
-    console.log("free: ",freePriceProducts);
-    console.log("not free: ",priceOnlyProducts);
+    console.log("free: ", freePriceProducts);
+    console.log("not free: ", priceOnlyProducts);
 
 
     // Use search results if present; otherwise fall back to all products
@@ -100,27 +100,27 @@ export function ProductListing() {
     }, [selectedCategories, priceSort, onResults]);
 
     // map selected category ids -> chip data
-const selectedCategoryChips = selectedCategories
-.map(id => {
-    const found = categories.find(c => c.id === id);
-    return found ? { id, label: found.name } : null;
-})
-.filter(Boolean) as { id: string; label: string }[];
+    const selectedCategoryChips = selectedCategories
+        .map(id => {
+            const found = categories.find(c => c.id === id);
+            return found ? { id, label: found.name } : null;
+        })
+        .filter(Boolean) as { id: string; label: string }[];
 
-const removeCategory = (id: string) => {
-setSelectedCategories(prev => prev.filter(cid => cid !== id));
-};
+    const removeCategory = (id: string) => {
+        setSelectedCategories(prev => prev.filter(cid => cid !== id));
+    };
 
-const clearAllFilters = () => {
-setSelectedCategories([]);
-setPriceSort("");
-};
+    const clearAllFilters = () => {
+        setSelectedCategories([]);
+        setPriceSort("");
+    };
 
     return (
-        <Layout style={{padding: "12px 24px"}}>
+        <Layout style={{ padding: "12px 24px" }}>
             <div className="px-6">
                 <Card>
-                    <Sider width={280} style={{marginRight: "24px"}}>
+                    <Sider width={280} style={{ marginRight: "24px" }}>
                         <ProductSidebar
                             selectedCategories={selectedCategories}
                             onCategoryChange={setSelectedCategories}
@@ -146,12 +146,12 @@ setPriceSort("");
                                     <p className="text-sm text-gray-500">
                                         Showing results for: <strong>"{searchQuery}"</strong>
                                     </p>
-                                    <Button 
-                                        type="default" 
+                                    <Button
+                                        type="default"
                                         size="small"
                                         icon={<ClearOutlined />}
                                         onClick={resetSearch}
-                                        style={{color: '#fc5c65', borderColor: '#fc5c65'}}
+                                        style={{ color: '#fc5c65', borderColor: '#fc5c65' }}
                                     >
                                         Clear Search
                                     </Button>
@@ -160,19 +160,19 @@ setPriceSort("");
                         )}
 
                         <div>
-                            <SearchBar onResults={setOnResults}/>
+                            <SearchBar onResults={setOnResults} />
                         </div>
-                        <div>
-                        <FilterChips
-    items={selectedCategoryChips}
-    onRemove={removeCategory}
-    onClearAll={clearAllFilters}
-/>
+                        <div className="mt-4">
+                            <FilterChips
+                                items={selectedCategoryChips}
+                                onRemove={removeCategory}
+                                onClearAll={clearAllFilters}
+                            />
                         </div>
                         <div className="mt-8 mb-8">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                 {currentProducts.map((p: ProductType) => (
-                                    <ProductCard key={p.id} product={p}/>
+                                    <ProductCard key={p.id} product={p} />
                                 ))}
                             </div>
                         </div>
