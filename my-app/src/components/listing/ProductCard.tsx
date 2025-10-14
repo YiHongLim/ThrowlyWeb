@@ -1,19 +1,19 @@
-import {Card, Skeleton} from "antd";
-import {Link} from "react-router-dom";
-import {ProductType} from "../../types";
+import { Card, Skeleton } from "antd";
+import { Link } from "react-router-dom";
+import { ProductType } from "../../types";
 
-import {useState} from "react";
+import { useState } from "react";
 
 interface ProductCardProps {
     product: ProductType;
 }
 
 // Image loader component
-function ImageWithLoader({src, alt}: { src: string; alt?: string }) {
+function ImageWithLoader({ src, alt }: { src: string; alt?: string }) {
     const [loading, setLoading] = useState(true);
 
     return (
-        <div style={{width: "100%",maxHeight:200, position: "relative", overflow: "hidden"}}>
+        <div style={{ width: "100%", maxHeight: 200, position: "relative", overflow: "hidden" }}>
             {loading && (
                 <Skeleton.Image
                     style={{
@@ -42,7 +42,7 @@ function ImageWithLoader({src, alt}: { src: string; alt?: string }) {
 }
 
 
-export function ProductCard({product}: ProductCardProps) {
+export function ProductCard({ product }: ProductCardProps) {
 
     return (
         <Link to={`/listings/${product.id}`} className="block group">
@@ -62,9 +62,9 @@ export function ProductCard({product}: ProductCardProps) {
                         </h3>
                     }
                     description={
-                        <span className="text-lg font-bold text-blue-600" style={{color: "#fc5c65"}}>
-              ${product.price}
-            </span>
+                        <span className="text-lg font-bold text-blue-600" style={{ color: "#fc5c65" }}>
+                            ${product.price}
+                        </span>
                     }
                 />
             </Card>
