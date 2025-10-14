@@ -7,6 +7,7 @@ import {ProductType,CategoryType} from "../../types";
 import SearchBar from "../../components/home/SearchBar";
 import { useSearchParams } from "react-router-dom";
 import { ClearOutlined } from "@ant-design/icons"; 
+import { FilterChips } from "../../components/listing/FilterChip";
 
 const {Sider, Content} = Layout;
 
@@ -98,6 +99,23 @@ export function ProductListing() {
         setCurrentPage(1);
     }, [selectedCategories, priceSort, onResults]);
 
+    // map selected category ids -> chip data
+const selectedCategoryChips = selectedCategories
+.map(id => {
+    const found = categories.find(c => c.id === id);
+    return found ? { id, label: found.name } : null;
+})
+.filter(Boolean) as { id: string; label: string }[];
+
+const removeCategory = (id: string) => {
+setSelectedCategories(prev => prev.filter(cid => cid !== id));
+};
+
+const clearAllFilters = () => {
+setSelectedCategories([]);
+setPriceSort("");
+};
+
     return (
         <Layout style={{padding: "12px 24px"}}>
             <div className="px-6">
@@ -143,6 +161,13 @@ export function ProductListing() {
 
                         <div>
                             <SearchBar onResults={setOnResults}/>
+                        </div>
+                        <div>
+                        <FilterChips
+    items={selectedCategoryChips}
+    onRemove={removeCategory}
+    onClearAll={clearAllFilters}
+/>
                         </div>
                         <div className="mt-8 mb-8">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
