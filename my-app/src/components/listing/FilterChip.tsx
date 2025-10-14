@@ -1,4 +1,4 @@
-import React from "react";
+
 
 type Chip = { id: string; label: string };
 
@@ -21,9 +21,8 @@ export function FilterChips({
                     background: "transparent",
                     border: "none",
                     color: "#9aa0a6",
-                    textDecoration: "underline",
                     cursor: "pointer",
-                    fontSize: 16,
+                    fontSize: 12,
                     padding: 0,
                 }}
             >
@@ -33,17 +32,17 @@ export function FilterChips({
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                 {items.map((chip) => (
                     <div
+                        className="rounded-full"
                         key={chip.id}
                         style={{
                             display: "inline-flex",
                             alignItems: "center",
                             gap: 10,
-                            padding: "5px 10px",
-                            background: "#e9eaee",
-                            color: "#111",
-                            borderRadius: 999,
-                            fontSize: 15,
-                            border: "1px solid #cfd2d7",
+                            padding: "2px 10px",
+                            background: "rgb(0,0,0)",
+                            color: "rgb(255, 255, 255)",
+                            fontSize: 12,
+                            border: "1px solid rgb(0, 0, 0)",
                         }}
                     >
                         <span>{chip.label}</span>
@@ -60,7 +59,7 @@ export function FilterChips({
                                 border: "none",
                                 background: "transparent",
                                 cursor: "pointer",
-                                color: "#333",
+                                color: "rgb(255, 255, 255)",
                                 fontSize: 10,
                                 lineHeight: 1,
                             }}
