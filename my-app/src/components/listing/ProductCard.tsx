@@ -1,6 +1,6 @@
 import {Card, Skeleton} from "antd";
 import {Link} from "react-router-dom";
-import {ProductType} from "../../types";
+import {ProductType} from "../../utils/types";
 
 import {useState} from "react";
 
