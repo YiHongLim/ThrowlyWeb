@@ -1,9 +1,10 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchSpecificListing, fetchCategories } from "../../data/listings";
-import { Button, Card, Typography, Tag, Spin, Divider } from "antd";
-import { ArrowLeftOutlined, GiftOutlined, ShoppingCartOutlined, HeartOutlined, ShareAltOutlined } from "@ant-design/icons";
-import { ProductType, CategoryType } from "../../types";
+import { fetchSpecificUser } from "../../data/userApi";
+import { Button, Card, Typography, Tag, Spin, Divider, Avatar } from "antd";
+import { ArrowLeftOutlined, GiftOutlined, ShoppingCartOutlined, HeartOutlined, ShareAltOutlined, BulbOutlined } from "@ant-design/icons";
+import { ProductType, CategoryType, UserType } from "../../types";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -13,6 +14,7 @@ export function ProductDetail() {
 
     const [product, setProduct] = useState<ProductType | null>(null);
     const [categories, setCategories] = useState<CategoryType[]>([]);
+    const [seller, setSeller] = useState<UserType | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
@@ -25,9 +27,16 @@ export function ProductDetail() {
                 ]);
                 setProduct(listings);
                 setCategories(categoryData);
+
+                // Fetch seller data if product exists
+                if (listings?.userId) {
+                    const sellerData = await fetchSpecificUser(listings.userId);
+                    setSeller(sellerData);
+                }
             } catch (error) {
                 console.error("Error fetching data:", error);
                 setProduct(null);
+                setSeller(null);
             } finally {
                 setLoading(false);
             }
@@ -39,6 +48,45 @@ export function ProductDetail() {
     const getCategoryName = (categoryId: string) => {
         const category = categories.find(cat => cat.id === categoryId);
         return category ? category.name : categoryId;
+    };
+
+    // Helper function to format date
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffTime = Math.abs(now.getTime() - date.getTime());
+        const diffWeeks = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7));
+        return `${diffWeeks} week${diffWeeks > 1 ? 's' : ''} ago`;
+    };
+
+    // Helper function to get seller display name
+    const getSellerDisplayName = () => {
+        if (seller) {
+            return `${seller.firstName} ${seller.lastName}`.trim() || seller.username || "Anonymous User";
+        }
+        return "Anonymous User";
+    };
+
+    // Helper function to get seller initials
+    const getSellerInitials = () => {
+        if (seller) {
+            const firstName = seller.firstName || "";
+            const lastName = seller.lastName || "";
+            if (firstName && lastName) {
+                return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+            } else if (seller.username) {
+                return seller.username.charAt(0).toUpperCase();
+            }
+        }
+        return "U";
+    };
+
+    // Helper function to get seller profile picture
+    const getSellerProfilePicture = () => {
+        if (seller?.preferences && seller.preferences.length > 0) {
+            return seller.preferences[0].profilePicture;
+        }
+        return null;
     };
 
     if (loading) {
@@ -151,26 +199,49 @@ export function ProductDetail() {
                                     }}
                                 />
                                 
-                                {/* Free Tag */}
-                                {isFree && (
+                                {/* Price Badge */}
+                                <div style={{
+                                    position: "absolute",
+                                    bottom: "20px",
+                                    right: "20px",
+                                    background: "#fc5c65",
+                                    color: "#ffffff",
+                                    padding: "12px 20px",
+                                    borderRadius: "12px",
+                                    fontSize: "18px",
+                                    fontWeight: 700,
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    boxShadow: "0 4px 12px rgba(252, 92, 101, 0.3)"
+                                }}>
+                                    <div>{displayPrice}</div>
+                                    {!isFree && <div style={{ fontSize: "12px", opacity: 0.9 }}>Points</div>}
+                                </div>
+
+                                {/* Image Dots */}
+                                {product.images.length > 1 && (
                                     <div style={{
                                         position: "absolute",
-                                        top: "16px",
-                                        right: "16px",
-                                        background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                                        color: "#ffffff",
-                                        padding: "8px 16px",
-                                        borderRadius: "24px",
-                                        fontSize: "14px",
-                                        fontWeight: 700,
-                                        letterSpacing: "0.5px",
-                                        boxShadow: "0 4px 12px rgba(16, 185, 129, 0.4)",
+                                        bottom: "20px",
+                                        left: "50%",
+                                        transform: "translateX(-50%)",
                                         display: "flex",
-                                        alignItems: "center",
-                                        gap: "6px"
+                                        gap: "8px"
                                     }}>
-                                        <GiftOutlined style={{ fontSize: "12px" }} />
-                                        FREE
+                                        {product.images.map((_, index) => (
+                                            <div
+                                                key={index}
+                                                style={{
+                                                    width: "8px",
+                                                    height: "8px",
+                                                    borderRadius: "50%",
+                                                    background: selectedImageIndex === index ? "#ffffff" : "rgba(255, 255, 255, 0.5)",
+                                                    cursor: "pointer"
+                                                }}
+                                                onClick={() => setSelectedImageIndex(index)}
+                                            />
+                                        ))}
                                     </div>
                                 )}
                             </div>
@@ -205,6 +276,70 @@ export function ProductDetail() {
                                     ))}
                                 </div>
                             )}
+
+                            {/* About the Seller Card - Moved to left side */}
+                            <Card style={{
+                                borderRadius: "16px",
+                                border: "1px solid #e2e8f0",
+                                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+                                marginTop: "24px"
+                            }}>
+                                <div style={{ padding: "24px" }}>
+                                    <Title level={3} style={{
+                                        fontSize: "20px",
+                                        fontWeight: 600,
+                                        color: "#1f2937",
+                                        marginBottom: "16px"
+                                    }}>
+                                        About the Seller
+                                    </Title>
+                                    
+                                    <div style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "16px"
+                                    }}>
+                                        <Avatar 
+                                            size={56}
+                                            src={getSellerProfilePicture()}
+                                            style={{
+                                                background: "#3b82f6",
+                                                color: "#ffffff",
+                                                fontSize: "20px",
+                                                fontWeight: 600
+                                            }}
+                                        >
+                                            {getSellerInitials()}
+                                        </Avatar>
+                                        
+                                        <div>
+                                            <Text style={{
+                                                fontSize: "18px",
+                                                fontWeight: 600,
+                                                color: "#1f2937",
+                                                display: "block",
+                                                marginBottom: "6px"
+                                            }}>
+                                                {getSellerDisplayName()}
+                                            </Text>
+                                            <Text style={{
+                                                fontSize: "16px",
+                                                color: "#6b7280",
+                                                display: "block",
+                                                marginBottom: "4px"
+                                            }}>
+                                                {seller?.numListings || 0} Listings
+                                            </Text>
+                                            <Text style={{
+                                                fontSize: "16px",
+                                                color: "#6b7280"
+                                            }}>
+                                                {seller?.score || 0} points
+                                            </Text>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Card>
                         </div>
 
                         {/* Right: Product Info */}
@@ -215,47 +350,58 @@ export function ProductDetail() {
                         }}>
                             {/* Title and Price */}
                             <div>
-                                <Title level={1} style={{
-                                    fontSize: "32px",
-                                    fontWeight: 700,
-                                    color: "#1f2937",
-                                    marginBottom: "16px",
-                                    lineHeight: "1.2",
-                                    letterSpacing: "-0.02em"
-                                }}>
-                                    {product.title}
-                                </Title>
-                                
                                 <div style={{
                                     display: "flex",
-                                    alignItems: "center",
-                                    gap: "16px",
-                                    marginBottom: "24px"
+                                    justifyContent: "space-between",
+                                    alignItems: "flex-start",
+                                    marginBottom: "12px"
                                 }}>
-                                    {isFree ? (
-                                        <div style={{
-                                            background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                                            color: "#ffffff",
-                                            padding: "12px 24px",
-                                            borderRadius: "12px",
-                                            fontSize: "24px",
-                                            fontWeight: 700,
-                                            letterSpacing: "0.5px",
-                                            boxShadow: "0 4px 12px rgba(16, 185, 129, 0.3)"
-                                        }}>
-                                            FREE
-                                        </div>
-                                    ) : (
-                                        <Text style={{
-                                            fontSize: "36px",
-                                            fontWeight: 700,
-                                            color: "#fc5c65",
-                                            letterSpacing: "-0.02em"
-                                        }}>
-                                            ${product.price}
-                                        </Text>
-                                    )}
+                                    <Title level={1} style={{
+                                        fontSize: "32px",
+                                        fontWeight: 700,
+                                        color: "#1f2937",
+                                        margin: 0,
+                                        lineHeight: "1.2",
+                                        letterSpacing: "-0.02em",
+                                        flex: 1
+                                    }}>
+                                        {product.title}
+                                    </Title>
+                                    <Text style={{
+                                        color: "#fc5c65",
+                                        fontSize: "16px",
+                                        fontWeight: 500,
+                                        whiteSpace: "nowrap",
+                                        marginLeft: "16px"
+                                    }}>
+                                        3 miles away
+                                    </Text>
                                 </div>
+                                
+                                <Text style={{
+                                    color: "#6b7280",
+                                    fontSize: "16px",
+                                    marginBottom: "16px",
+                                    display: "block"
+                                }}>
+                                    {formatDate(product.dateCreated)}
+                                </Text>
+
+                                {/* Drop-off Cost Button */}
+                                <Button
+                                    style={{
+                                        background: "#fc5c65",
+                                        borderColor: "#fc5c65",
+                                        color: "#ffffff",
+                                        borderRadius: "8px",
+                                        height: "40px",
+                                        fontSize: "16px",
+                                        fontWeight: 600,
+                                        marginBottom: "24px"
+                                    }}
+                                >
+                                    Drop-off cost $9 points
+                                </Button>
                             </div>
 
                             {/* Action Buttons */}
@@ -305,7 +451,7 @@ export function ProductDetail() {
                                 />
                             </div>
 
-                            {/* Description */}
+                            {/* About this item Card */}
                             <Card style={{
                                 borderRadius: "16px",
                                 border: "1px solid #e2e8f0",
@@ -318,7 +464,7 @@ export function ProductDetail() {
                                         color: "#1f2937",
                                         marginBottom: "16px"
                                     }}>
-                                        Description
+                                        About this item
                                     </Title>
                                     
                                     <Paragraph style={{
@@ -332,58 +478,43 @@ export function ProductDetail() {
                                 </div>
                             </Card>
 
-                            {/* Product Details */}
-                            <Card style={{
-                                borderRadius: "16px",
-                                border: "1px solid #e2e8f0",
-                                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)"
-                            }}>
-                                <div style={{ padding: "24px" }}>
-                                    <Title level={3} style={{
-                                        fontSize: "20px",
-                                        fontWeight: 600,
-                                        color: "#1f2937",
-                                        marginBottom: "16px"
-                                    }}>
-                                        Product Details
-                                    </Title>
-                                    
-                                    <div style={{
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        gap: "12px"
-                                    }}>
+                            {/* Market Insights Card */}
+                            {product.LLMexplanation && (
+                                <Card style={{
+                                    borderRadius: "16px",
+                                    border: "1px solid #e2e8f0",
+                                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+                                    borderLeft: "4px solid #fc5c65"
+                                }}>
+                                    <div style={{ padding: "24px" }}>
                                         <div style={{
                                             display: "flex",
-                                            justifyContent: "space-between",
                                             alignItems: "center",
-                                            padding: "8px 0"
+                                            gap: "8px",
+                                            marginBottom: "16px"
                                         }}>
-                                            <Text style={{ color: "#6b7280", fontWeight: 500 }}>Category</Text>
-                                            <Tag color="blue" style={{ borderRadius: "6px" }}>
-                                                {getCategoryName(product.categoryId)}
-                                            </Tag>
+                                            <BulbOutlined style={{ color: "#fc5c65", fontSize: "20px" }} />
+                                            <Title level={3} style={{
+                                                fontSize: "20px",
+                                                fontWeight: 600,
+                                                color: "#1f2937",
+                                                margin: 0
+                                            }}>
+                                                Market Insights
+                                            </Title>
                                         </div>
                                         
-                                        <Divider style={{ margin: "8px 0" }} />
-                                        
-                                        <div style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            alignItems: "center",
-                                            padding: "8px 0"
+                                        <Paragraph style={{
+                                            fontSize: "16px",
+                                            color: "#4b5563",
+                                            lineHeight: "1.6",
+                                            margin: 0
                                         }}>
-                                            <Text style={{ color: "#6b7280", fontWeight: 500 }}>Price Type</Text>
-                                            <Tag 
-                                                color={isFree ? "green" : "orange"} 
-                                                style={{ borderRadius: "6px" }}
-                                            >
-                                                {isFree ? "Free" : "Paid"}
-                                            </Tag>
-                                        </div>
+                                            {product.LLMexplanation}
+                                        </Paragraph>
                                     </div>
-                                </div>
-                            </Card>
+                                </Card>
+                            )}
                         </div>
                     </div>
                 </Card>
