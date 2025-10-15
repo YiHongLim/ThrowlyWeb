@@ -1,9 +1,9 @@
-import {Checkbox, Select, Typography, Divider, Badge, Button} from "antd";
-import {FilterOutlined, SortAscendingOutlined, ClearOutlined, DownOutlined} from "@ant-design/icons";
+import { Checkbox, Select, Typography, Divider, Badge, Button } from "antd";
+import { FilterOutlined, SortAscendingOutlined, ClearOutlined, DownOutlined } from "@ant-design/icons";
 import "../../output.css";
 
-const {Title, Text} = Typography;
-const {Option} = Select;
+const { Title, Text } = Typography;
+const { Option } = Select;
 
 interface ProductSidebarProps {
     selectedCategories: string[],
@@ -18,8 +18,8 @@ export function ProductSidebar({
     onCategoryChange,
     priceSort,
     onPriceSortChange,
-    categoriesName = [] 
-                               }: ProductSidebarProps) {
+    categoriesName = []
+}: ProductSidebarProps) {
     const handleCategoryChange = (checkedValues: string[]) => {
         onCategoryChange(checkedValues);
     };
@@ -82,7 +82,7 @@ export function ProductSidebar({
             </div>
 
             {/* Categories Section */}
-            <div style={{ 
+            <div style={{
                 padding: "24px",
                 flex: 1,
                 overflowY: "auto"
@@ -103,12 +103,12 @@ export function ProductSidebar({
                     </Text>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                         {selectedCategories.length > 0 && (
-                            <Badge 
-                                count={selectedCategories.length} 
-                                style={{ 
+                            <Badge
+                                count={selectedCategories.length}
+                                style={{
                                     backgroundColor: "#fc5c65",
                                     boxShadow: "0 2px 4px rgba(252, 92, 101, 0.3)"
-                                }} 
+                                }}
                             />
                         )}
                         {selectedCategories.length > 0 && (
@@ -147,16 +147,16 @@ export function ProductSidebar({
                                     alignItems: "center",
                                     padding: "12px 16px",
                                     borderRadius: "12px",
-                                    background: isSelected 
-                                        ? "linear-gradient(135deg, #fc5c65 0%, #ff6b7a 100%)" 
+                                    background: isSelected
+                                        ? "linear-gradient(135deg, #fc5c65 0%, #ff6b7a 100%)"
                                         : "#ffffff",
-                                    border: isSelected 
-                                        ? "none" 
+                                    border: isSelected
+                                        ? "none"
                                         : "1px solid #e5e7eb",
                                     cursor: "pointer",
                                     transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                                    boxShadow: isSelected 
-                                        ? "0 4px 12px rgba(252, 92, 101, 0.25)" 
+                                    boxShadow: isSelected
+                                        ? "0 4px 12px rgba(252, 92, 101, 0.25)"
                                         : "0 1px 3px rgba(0, 0, 0, 0.05)",
                                     transform: isSelected ? "translateY(-1px)" : "translateY(0)"
                                 }}
@@ -205,14 +205,14 @@ export function ProductSidebar({
 
             {/* Divider */}
             <Divider style={{
-                margin: "0 24px",
+                margin: "0",
                 borderColor: "#e5e7eb",
                 borderWidth: "1px",
                 flexShrink: 0
             }} />
 
             {/* Sort Section */}
-            <div style={{ 
+            <div style={{
                 padding: "24px",
                 flexShrink: 0
             }}>
@@ -272,7 +272,7 @@ export function ProductSidebar({
                     textAlign: "center",
                     display: "block"
                 }}>
-                    {selectedCategories.length > 0 || priceSort 
+                    {selectedCategories.length > 0 || priceSort
                         ? `${selectedCategories.length + (priceSort ? 1 : 0)} filter${selectedCategories.length + (priceSort ? 1 : 0) > 1 ? 's' : ''} applied`
                         : "No filters applied"
                     }
