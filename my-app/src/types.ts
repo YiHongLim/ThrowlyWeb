@@ -11,18 +11,18 @@ export type CampaignType = {
     organizerAvatar?: string;
 }
 
-interface imageProps{
-    thumbnailUrl:string;
-    url:string;
+interface imageProps {
+    thumbnailUrl: string;
+    url: string;
 }
 
-interface locationProps{
-    _latitude:number;
-    _longitude:number;
+interface locationProps {
+    _latitude: number;
+    _longitude: number;
 }
 
 export type ProductType = {
-    id:string;
+    id: string;
     status: string;
     buyerId?: string;
     categoryId: string;
@@ -30,21 +30,40 @@ export type ProductType = {
     dateCreated: string;
     description: string;
     geohash: string;
-    images:imageProps[];
+    images: imageProps[];
     likes: number;
     location: locationProps;
-    points:number;
+    points: number;
     price: number;
-    freePrice:number | 0;
+    freePrice: number | 0;
     searchKeywords: string[];
     size: string;
-    tagname:string;
+    tagname: string;
     title: string;
     userId: string;
+    LLMexplanation: string;
 }
 
 export type CategoryType = {
     id: string;
     imageUrl: string;
     name: string;
+}
+
+interface pref{
+    isMarketInsightOpen:boolean;
+    profilePicture:string;
+}
+
+export type UserType = {
+    id:string;
+    createdAt:string;
+    email:string;
+    firstName:string;
+    lastName:string;
+    numListings:number;
+    preferences:pref[];
+    score:number;
+    sex:string;
+    username:string;
 }
