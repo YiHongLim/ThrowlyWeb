@@ -15,8 +15,8 @@ import {
   LinkOutlined
 } from "@ant-design/icons";
 import blobBackground from "../../assets/images/gofurnishme_images/blob-scene-haikei-1.svg";
-import AppStoreImage from "../../assets/images/Download_images/App_store.png";
-import GooglePlayImage from "../../assets/images/Download_images/Google_play.png";
+import AppStoreImage from "../../assets/images/Download_images/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.jpg";
+import GooglePlayImage from "../../assets/images/Download_images/GetItOnGooglePlay_Badge_Web_color_English.png";
 
 const { Title, Paragraph, Text } = Typography;
 const { Panel } = Collapse;
