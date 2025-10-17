@@ -64,6 +64,9 @@ export type ReportType = {
   sellerId: string;
   status: 'REPORTED' | 'INVESTIGATING' | 'RESOLVED' | 'DISMISSED';
   userId: string;
+  adminId?: string;
+  timeResolved?: any;
+  resolutionDescription?: string;
 }
 
 export type MYCollectionItemType = {

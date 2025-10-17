@@ -7,10 +7,11 @@ import {
   getDocs,
   query,
   where,
-  setDoc
+  setDoc,
+  updateDoc
 } from 'firebase/firestore';
 import { db } from '../../firebase';
-import { AdminType, FeedbackType, ReportType, MYCollectionItemType } from '../../types';
+import { FeedbackType, ReportType } from '../../types';
 
 export const useAdmin = (user: User | null) => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -134,6 +135,31 @@ export const useAdmin = (user: User | null) => {
       return { success: false, error };
     }
   }, []);
+
+  // Mark a report as resolved
+  const resolveReport = useCallback(async (reportId: string, resolutionDescription: string, adminId: string) => {
+    try {
+      const reportRef = doc(db, 'Reports', reportId);
+      const now = new Date();
+      
+      await updateDoc(reportRef, {
+        status: 'RESOLVED',
+        adminId: adminId,
+        timeResolved: now,
+        resolutionDescription: resolutionDescription
+      });
+      
+      console.log('useAdmin: Report resolved:', reportId);
+      
+      // Refresh the reports list
+      await fetchReports();
+      
+      return { success: true };
+    } catch (error) {
+      console.error('useAdmin: Error resolving report:', error);
+      return { success: false, error };
+    }
+  }, [fetchReports]);
 
   // Fetch user information by ID
   const fetchUserInfo = useCallback(async (userId: string) => {
@@ -309,6 +335,7 @@ export const useAdmin = (user: User | null) => {
     fetchFeedback,
     fetchReports,
     addAdmin,
+    resolveReport,
     fetchUserInfo,
     fetchItemInfo,
     fetchCurrentAdmins,
@@ -327,4 +354,5 @@ export const useAdmin = (user: User | null) => {
     adminStyles,
   };
 };
+
 
