@@ -1,11 +1,11 @@
-on:
-  push:
-    branches: [main]
+image: node:18
 
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    steps:
-    - run: npm-install
-    - run: npm-run-build
-    - run: npm test
+stages:
+  - build
+
+build-and-test:
+  stage: build
+  script:
+    - npm install
+    - npm run build
+    - npm test
