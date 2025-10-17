@@ -37,6 +37,11 @@ interface locationProps{
     _longitude:number;
 }
 
+export interface Categories {
+    label: string;
+    value: string;
+}
+
 export type ProductType = {
     id:string;
     status: string;
