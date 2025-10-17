@@ -121,15 +121,11 @@ const NavBar: React.FC = () => {
         <Menu.Item key="furnish">
           <a href="/campaign-page">Go Furnish Me</a>
         </Menu.Item>
-        <Menu.Item key="overview">Overview</Menu.Item>
+        <Menu.Item key="overview">
+          <a href="/overview">Overview</a>
+        </Menu.Item>
         <Menu.Item key="about">
-          <a href="/about">About Throwly</a>
-        </Menu.Item>
-        <Menu.Item key="faq">
-          <a href="/faq">FAQ</a>
-        </Menu.Item>
-        <Menu.Item key="cart">
-          <a href="/cart">Cart</a>
+          <a href="/about">About</a>
         </Menu.Item>
       </Menu>
 
