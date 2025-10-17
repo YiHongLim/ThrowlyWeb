@@ -11,6 +11,7 @@ export type CampaignType = {
     goal: number;
     story: string;
     organizerAvatar?: string;
+    userId: string;
 }
 
 export type DonationItem = {
@@ -20,8 +21,44 @@ export type DonationItem = {
     title: string;
     amount: number;
     description: string;
+    isPublic: boolean;
     campaignId: string;
-    note: string;
     firstName: string;
     lastName: string;
 };
+
+interface imageProps{
+    thumbnailUrl:string;
+    url:string;
+}
+
+interface locationProps{
+    _latitude:number;
+    _longitude:number;
+}
+
+export interface Categories {
+    label: string;
+    value: string;
+}
+
+export type ProductType = {
+    id:string;
+    status: string;
+    buyerId?: string;
+    categoryId: string;
+    condition: string;
+    dateCreated: string;
+    description: string;
+    geohash: string;
+    images:imageProps[];
+    likes: number;
+    location: locationProps;
+    points:number;
+    price: number;
+    searchKeywords: string[];
+    size: string;
+    tagname:string;
+    title: string;
+    userId: string;
+}

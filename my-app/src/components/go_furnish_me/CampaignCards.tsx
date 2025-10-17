@@ -20,7 +20,8 @@ async function getCampaigns() {
         raised: doc.data().raised || 0,
         goal: doc.data().goal || 100,
         story: doc.data().story || '',
-        organizerAvatar: doc.data().organizerAvatar || ''
+        organizerAvatar: doc.data().organizerAvatar || '',
+        userId: doc.data().userId,
     }));
     return campaignList;
 }
