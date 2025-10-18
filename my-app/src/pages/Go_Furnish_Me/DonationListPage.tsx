@@ -22,16 +22,16 @@ const DonationListPage:React.FC = () => {
                 collection(db, "CampaignDonations"),
                 where("campaignId", "==", id),
             )
-            const qPublic = query(
-                collection(db, "CampaignDonations", "isPublic")
-            )
+            // const qPublic = query(
+            //     collection(db, "CampaignDonations", "isPublic")
+            // )
             const snap = await getDocs(q);
             const rows = snap.docs.map(doc => ({
                 id: doc.id,
                 ...(doc.data() as Omit<DonationItem, "id">)
             }));
             // setItems(rows);
-            rows.forEach(r => console.log("Doc", r.id, r))
+            // rows.forEach(r => console.log("Doc", r.id, r))
 
             const enrichedRows = await fetchDonorNames(rows);
             setItems(enrichedRows);
@@ -44,10 +44,6 @@ const onRemove = (id: string) => {
 };
 
 const total = items.reduce((s, i) => s + i.amount, 0);
-    items.forEach(item => {
-        console.log(item.amount);
-    });
-
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -129,19 +125,6 @@ return (
                         {/*{it.cartsCount ?? 0} {(it.cartsCount ?? 0) === 1 ? "cart" : "carts"} · {it.viewsCount ?? 0} views · {it.chatsCount ?? 0} chats*/}
                       </span>
                                         </div>
-                                        {/*<div style={{ marginTop: 8 }}>*/}
-                                        {/*    <Button*/}
-                                        {/*        danger*/}
-                                        {/*        className="btn-remove"*/}
-                                        {/*        onClick={() => onRemove(it.id)}*/}
-                                        {/*        style={{ marginRight: 10 }}*/}
-                                        {/*    >*/}
-                                        {/*        Remove*/}
-                                        {/*    </Button>*/}
-                                        {/*    <Button>*/}
-                                        {/*        View details*/}
-                                        {/*    </Button>*/}
-                                        {/*</div>*/}
                                     </div>
 
                                     <div style={{ width: 140, display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 7 }}>

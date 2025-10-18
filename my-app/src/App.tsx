@@ -25,7 +25,7 @@ function App() {
                 <Route path="/go-furnish-me" element={<GoFurnishMePage />} />
                 <Route path="/campaign-page" element={<CampaignPage />} />
                 <Route path="/campaign-donation-list-page/:id" element={<DonationListPage />} />
-                <Route path="/campaign-details/:id" element={<CampaignDetailsPage />} />
+                <Route path="/campaign-page-details/:id" element={<CampaignDetailsPage />} />
                 <Route path="/estimate-listing" element={<EstimateListingPage />} />
                 <Route path="/login" element={<AuthPage />} />
                 <Route path="/signup" element={<SignUpPage />} />

@@ -17,8 +17,6 @@ const DonateNowButton: React.FC<{ campaign: CampaignType }> = ({ campaign }) => 
             navigate('/login');
             return;
         }
-        console.log(currentUser.uid);
-        console.log(campaign.userId);
         if (currentUser.uid === campaign.userId) {
             alert("You cannot donate to your own campaign.");
             return;
@@ -28,7 +26,6 @@ const DonateNowButton: React.FC<{ campaign: CampaignType }> = ({ campaign }) => 
     // Handle successful submit
     const handleDonateSubmit = (values: any) => {
         // TODO: Send values to backend/API here
-        console.log('Donation submitted:', values);
         setShowDonate(false); // Close modal
     };
 
