@@ -30,6 +30,8 @@ const AdminPage: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState<ReportType | null>(null);
   const [resolutionDescription, setResolutionDescription] = useState('');
   const [showResolutionForm, setShowResolutionForm] = useState(false);
+  const [showResolutionView, setShowResolutionView] = useState(false);
+  const [reportFilter, setReportFilter] = useState<'all' | 'open' | 'closed'>('all');
   const loadedDataRef = useRef<{userIds: Set<string>, itemIds: Set<string>}>({userIds: new Set(), itemIds: new Set()});
 
   const { isAdmin, loading: adminLoading, feedback, reports, fetchFeedback, fetchReports, addAdmin, resolveReport, fetchUserInfo, fetchItemInfo, fetchCurrentAdmins, getInputStyles, getButtonStyles, adminStyles } = useAdmin(user);
@@ -178,6 +180,16 @@ const AdminPage: React.FC = () => {
     setResolutionDescription(''); // Clear the form
   }, []);
 
+  const openResolutionView = useCallback((report: ReportType) => {
+    setSelectedReport(report);
+    setShowResolutionView(true);
+  }, []);
+
+  const closeResolutionView = useCallback(() => {
+    setShowResolutionView(false);
+    setSelectedReport(null);
+  }, []);
+
   // Reusable UI Components
   const IndexBadge = ({ index, color = '#1890ff' }: { index: number; color?: string }) => (
     <div style={adminStyles.indexBadge(color)}>
@@ -306,7 +318,17 @@ const AdminPage: React.FC = () => {
       open: reports.filter(r => r.status === 'REPORTED' || r.status === 'INVESTIGATING').length
     };
 
-    const sortedReports = [...reports].sort((a, b) => {
+    // Filter reports based on selected filter
+    const filteredReports = reports.filter(report => {
+      if (reportFilter === 'open') {
+        return report.status === 'REPORTED' || report.status === 'INVESTIGATING';
+      } else if (reportFilter === 'closed') {
+        return report.status === 'RESOLVED' || report.status === 'DISMISSED';
+      }
+      return true; // 'all'
+    });
+
+    const sortedReports = [...filteredReports].sort((a, b) => {
       const dateA = a.createdAt ? (a.createdAt.toDate ? a.createdAt.toDate().getTime() : new Date(a.createdAt).getTime()) : 0;
       const dateB = b.createdAt ? (b.createdAt.toDate ? b.createdAt.toDate().getTime() : new Date(b.createdAt).getTime()) : 0;
       return dateB - dateA;
@@ -319,6 +341,52 @@ const AdminPage: React.FC = () => {
             <StatCard value={stats.total} label="Total Reports" color="#1890ff" />
             <StatCard value={stats.open} label="Open" color="#cf1322" />
             <StatCard value={stats.closed} label="Closed" color="#52c41a" />
+          </div>
+          
+          {/* Filter Buttons */}
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+            <button
+              onClick={() => setReportFilter('all')}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '6px',
+                border: '1px solid #d9d9d9',
+                background: reportFilter === 'all' ? '#1890ff' : '#fff',
+                color: reportFilter === 'all' ? '#fff' : '#000',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}
+            >
+              All ({stats.total})
+            </button>
+            <button
+              onClick={() => setReportFilter('open')}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '6px',
+                border: '1px solid #d9d9d9',
+                background: reportFilter === 'open' ? '#cf1322' : '#fff',
+                color: reportFilter === 'open' ? '#fff' : '#000',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}
+            >
+              Open ({stats.open})
+            </button>
+            <button
+              onClick={() => setReportFilter('closed')}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '6px',
+                border: '1px solid #d9d9d9',
+                background: reportFilter === 'closed' ? '#52c41a' : '#fff',
+                color: reportFilter === 'closed' ? '#fff' : '#000',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}
+            >
+              Closed ({stats.closed})
+            </button>
           </div>
         </div>
         
@@ -375,6 +443,22 @@ const AdminPage: React.FC = () => {
                             }}
                           >
                             Resolve Report
+                          </button>
+                        )}
+                        {(report.status === 'RESOLVED' || report.status === 'DISMISSED') && (
+                          <button
+                            onClick={() => openResolutionView(report)}
+                            style={{
+                              background: '#52c41a',
+                              color: 'white',
+                              border: 'none',
+                              fontSize: '12px',
+                              padding: '6px 12px',
+                              borderRadius: '6px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            View Resolution
                           </button>
                         )}
                       </div>
@@ -842,12 +926,164 @@ const AdminPage: React.FC = () => {
                   <ResolveForm
                     reportId={selectedReport.id}
                     isResolving={resolvingReports.has(selectedReport.id)}
-                    onResolve={handleResolveReport}
+        onResolve={handleResolveReport}
                     resolutionDescription={resolutionDescription}
                     setResolutionDescription={setResolutionDescription}
                     getButtonStyles={getButtonStyles}
                   />
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Resolution View Modal */}
+      {showResolutionView && selectedReport && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '20px',
+            backdropFilter: 'blur(4px)'
+          }}
+          onClick={closeResolutionView}
+        >
+          <div 
+            style={{
+              background: 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)',
+              borderRadius: '12px',
+              width: '600px',
+              maxHeight: '80vh',
+              overflowY: 'auto',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.2)',
+              border: '2px solid #52c41a',
+              position: 'relative'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              padding: '16px 20px',
+              background: 'linear-gradient(135deg, #52c41a 0%, #73d13d 100%)',
+              borderRadius: '12px 12px 0 0',
+              color: 'white'
+            }}>
+              <div>
+                <Title level={4} style={{ margin: 0, color: 'white', fontSize: '16px' }}>
+                  📋 Resolution Details - Report #{selectedReport.id}
+                </Title>
+                <Text style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '12px' }}>
+                  Resolution by Admin
+                </Text>
+              </div>
+              <button
+                onClick={closeResolutionView}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  border: 'none',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  color: 'white',
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                }}
+              >
+                ×
+              </button>
+            </div>
+            
+            {/* Content */}
+            <div style={{ padding: '20px' }}>
+              <div style={{ marginBottom: '20px' }}>
+                <Text strong style={{ color: '#52c41a', fontSize: '14px', display: 'block', marginBottom: '8px' }}>
+                  Resolution Description:
+                </Text>
+                <div style={{
+                  padding: '12px',
+                  backgroundColor: '#f6ffed',
+                  border: '1px solid #b7eb8f',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  lineHeight: '1.6',
+                  whiteSpace: 'pre-wrap'
+                }}>
+                  {selectedReport.resolutionDescription || 'No resolution description provided.'}
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+                <div>
+                  <Text strong style={{ color: '#52c41a', fontSize: '12px' }}>Status:</Text>
+                  <div style={{ marginTop: '4px' }}>
+                    <StatusTag status={selectedReport.status} />
+                  </div>
+                </div>
+                <div>
+                  <Text strong style={{ color: '#52c41a', fontSize: '12px' }}>Resolved Date:</Text>
+                  <div style={{ marginTop: '4px', fontSize: '12px' }}>
+                    {selectedReport.timeResolved ? (
+                      selectedReport.timeResolved.toDate ? 
+                        selectedReport.timeResolved.toDate().toLocaleString() : 
+                        new Date(selectedReport.timeResolved).toLocaleString()
+                    ) : 'N/A'}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <Text strong style={{ color: '#52c41a', fontSize: '12px', display: 'block', marginBottom: '8px' }}>
+                  Original Report Reason:
+                </Text>
+                <div style={{
+                  padding: '8px',
+                  backgroundColor: '#f8f9fa',
+                  border: '1px solid #e9ecef',
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                  whiteSpace: 'pre-wrap'
+                }}>
+                  {selectedReport.reason || 'No reason provided'}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <button
+                  onClick={closeResolutionView}
+                  style={{
+                    background: '#52c41a',
+                    color: 'white',
+                    border: 'none',
+                    fontSize: '12px',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>

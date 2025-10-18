@@ -2,10 +2,12 @@
 import React, { useEffect, useRef, useState } from "react";
 // adjust this import path to where you put firebaseAuthHelpers.ts
 import { isUsernameUnique, uploadImage, signUp } from "./firebaseAuthHelpers";
+import ProfilePictureUpload from "../components/ProfilePictureUpload";
 
 const Shine = () => (
   <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
 );
+
 
 const SignUpPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -14,7 +16,8 @@ const SignUpPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [profilePic, setProfilePic] = useState<File | null>(null);
+  const [profilePic, setProfilePic] = useState<string | null>(null);
+  const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -68,11 +71,31 @@ const SignUpPage: React.FC = () => {
     }, 500);
   };
 
-  // profile file input
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0] ?? null;
-    setProfilePic(f);
+  // Handle profile picture selection
+  const handleProfilePicSelect = async (file: File) => {
+    try {
+      // Create a preview URL for the image
+      const imageUrl = URL.createObjectURL(file);
+      setProfilePic(imageUrl);
+      setProfilePicFile(file);
+    } catch (error) {
+      console.error('Error processing image:', error);
+      setError('Error processing image. Please try again.');
+    }
   };
+
+  // Handle profile picture removal
+  const handleProfilePicRemove = () => {
+    if (profilePic) {
+      URL.revokeObjectURL(profilePic);
+    }
+    setProfilePic(null);
+    setProfilePicFile(null);
+  };
+
+
+
+
 
   // Helper: final client-side validation before attempting signup
   const validateBeforeSubmit = () => {
@@ -131,10 +154,10 @@ const SignUpPage: React.FC = () => {
 
       // Upload profile pic first (if provided)
       let profilePicUrl: string | null = null;
-      if (profilePic) {
+      if (profilePicFile) {
         // choose a stable storage path name
-        const safeName = `profilePics/${usernameLower}_${Date.now()}_${profilePic.name}`;
-        profilePicUrl = await uploadImage(profilePic, safeName);
+        const safeName = `profilePics/${usernameLower}_${Date.now()}_profile.png`;
+        profilePicUrl = await uploadImage(profilePicFile, safeName);
       }
 
       // Call signUp helper with all the required fields
@@ -214,6 +237,18 @@ const SignUpPage: React.FC = () => {
           {success && <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-600 text-sm">{success}</div>}
 
           <div className="flex flex-col gap-4 mt-1">
+            {/* Profile Picture Upload */}
+            <div className="text-center mb-6">
+                <ProfilePictureUpload
+                  profilePic={profilePic}
+                  onImageSelect={handleProfilePicSelect}
+                  onImageRemove={handleProfilePicRemove}
+                  size={100}
+                  className="mb-2"
+                  disabled={loading}
+                />
+            </div>
+
             <div className="flex flex-col gap-4 mb-1">
               <input
                 type="text"
@@ -282,18 +317,6 @@ const SignUpPage: React.FC = () => {
                 </button>
               </div>
 
-              {/* Profile picture (optional) */}
-              <div className="text-left">
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  onChange={handleFileChange} 
-                  className="w-full h-12 px-4 py-2 text-sm text-gray-600 bg-gray-50 border-2 border-gray-200 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#ff6f73] file:text-white hover:file:bg-[#ff4757] focus:outline-none focus:ring-4 focus:ring-[rgba(255,111,115,0.1)] focus:border-[#ff6f73] transition-colors" 
-                />
-                {profilePic && <p className="text-xs text-gray-500 mt-1">Selected: {profilePic.name}</p>}
-                {!profilePic && <p className="text-xs text-gray-500 mt-1">No file chosen</p>}
-              </div>
-
               <button onClick={handleEmailSignUp} disabled={loading || !!usernameError} className="relative group overflow-hidden h-14 rounded-xl bg-gradient-to-br from-[#ff6f73] to-[#ff4757] text-white text-[15px] font-semibold">
                 <Shine />
                 {loading ? "Creating Account…" : "Sign Up"}
@@ -310,6 +333,7 @@ const SignUpPage: React.FC = () => {
           </p>
         </div>
       </div>
+
     </div>
   );
 };

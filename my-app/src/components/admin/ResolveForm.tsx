@@ -159,9 +159,6 @@ const ResolveFormComponent: React.FC<ResolveFormProps> = ({
           {isResolving ? '⏳ Resolving...' : '✅ Mark as Resolved'}
         </button>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          <Text type="secondary" style={{ fontSize: '12px', margin: 0 }}>
-            {isResolving ? '⏳ Please wait...' : '⚠️ This action cannot be undone'}
-          </Text>
           {resolutionDescription.length < 10 && resolutionDescription.length > 0 && (
             <Text style={{ fontSize: '11px', color: '#faad14', margin: 0 }}>
               💡 Consider adding more details
