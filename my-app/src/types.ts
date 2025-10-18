@@ -66,4 +66,5 @@ export type UserType = {
     score:number;
     sex:string;
     username:string;
+    profilePicture:string;
 }

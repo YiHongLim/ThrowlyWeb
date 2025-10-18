@@ -85,6 +85,8 @@ export function ProductDetail() {
     const getSellerProfilePicture = () => {
         if (seller?.preferences && seller.preferences.length > 0) {
             return seller.preferences[0].profilePicture;
+        }else if(seller?.profilePicture){
+            return seller.profilePicture;
         }
         return null;
     };
@@ -277,8 +279,8 @@ export function ProductDetail() {
                                 </div>
                             )}
 
-                            {/* About the Seller Card - Moved to left side */}
-                            <Card style={{
+                          {/* About the Seller Card - Moved to left side */}
+                          <Card style={{
                                 borderRadius: "16px",
                                 border: "1px solid #e2e8f0",
                                 boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
@@ -301,15 +303,15 @@ export function ProductDetail() {
                                     }}>
                                         <Avatar 
                                             size={56}
-                                            src={getSellerProfilePicture()}
+                                            src={getSellerProfilePicture() || null}
                                             style={{
-                                                background: "#3b82f6",
+                                                background: getSellerProfilePicture() ? "transparent" : "#3b82f6",
                                                 color: "#ffffff",
                                                 fontSize: "20px",
                                                 fontWeight: 600
                                             }}
                                         >
-                                            {getSellerInitials()}
+                                            {!getSellerProfilePicture() && getSellerInitials()}
                                         </Avatar>
                                         
                                         <div>

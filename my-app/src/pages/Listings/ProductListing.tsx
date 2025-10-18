@@ -348,13 +348,6 @@ export function ProductListing() {
                                 marginBottom: "32px"
                             }}>
                                 <div>
-                                    <Text style={{
-                                        fontSize: "18px",
-                                        fontWeight: 600,
-                                        color: "#1f2937"
-                                    }}>
-                                        {loading ? "Loading products..." : `${totalProducts} product${totalProducts !== 1 ? 's' : ''} found`}
-                                    </Text>
                                     {!loading && (
                                         <Text style={{
                                             fontSize: "14px",
