@@ -3,17 +3,21 @@ import { Row, Col, Card, Typography, Button, Progress, Avatar, Divider, Tag } fr
 import {doc, getDoc} from "firebase/firestore";
 import {db} from "../../firebase";
 import {useParams} from "react-router";
-import {CampaignType} from "../../types";
+import {CampaignType} from "../../utils/types";
 import DonateNowButton from "../../components/go_furnish_me/DonateNowButton";
 import {withAuthProtection} from "../../components/WithAuthProtection";
 import shareCampaignButton from "../../components/go_furnish_me/ShareCampaignButton";
 import ShareCampaignButton from "../../components/go_furnish_me/ShareCampaignButton";
+import {useAuth} from "../../context/useAuth";
 
 const { Title, Paragraph, Text } = Typography;
 
-export default function CampaignPageDetails() {
+export default function CampaignDetailsPage() {
     const { id } = useParams();
     const [campaign, setCampaign] = useState<CampaignType | null>(null);
+    const { currentUser } = useAuth();
+    const userId = currentUser?.uid;
+    const isSelfDonation = userId === campaign?.userId;
 
     useEffect(() => {
         async function fetchCampaign() {
@@ -23,16 +27,17 @@ export default function CampaignPageDetails() {
             if (docSnap.exists()) {
                 const docData = docSnap.data();
                 setCampaign({
-                    id: docSnap.id,
-                    title: docData?.title || "",
-                    organizer: docData?.organizer || "",
-                    organizerLocation: docData?.organizerLocation || "",
                     category: docData?.category || "",
+                    goal: docData?.goal ?? 0,
+                    id: docSnap.id,
                     media: docData?.media || "",
-                    raised: docData?.raised ?? 0,         // Use 0 if undefined
-                    goal: docData?.goal ?? 0,             // Use 0 if undefined
+                    organizer: docData?.organizer || "",
+                    organizerAvatar: docData?.organizerAvatar || "",
+                    organizerLocation: docData?.organizerLocation || "",         // Use 0 if undefined
+                    raised: docData?.raised ?? 0,             // Use 0 if undefined
                     story: docData?.story || "",
-                    organizerAvatar: docData?.organizerAvatar || ""
+                    title: docData?.title || "",
+                    userId: userId || "",
                 });
             } else {
                 setCampaign(null);
@@ -127,7 +132,7 @@ export default function CampaignPageDetails() {
                                     <li><Text strong>Anonymous: </Text> $5000 - Top donation</li>
                                     <li><Text strong>{campaign.organizer}: </Text> $100 - First donation</li>
                                 </ul>
-                                <Button type="link" style={{ padding: 0 }}>See all</Button>
+                                <Button type="link" href={`/campaign-donation-list-page/${campaign.id}`} style={{ padding: 0 }}>See all donations</Button>
                             </div>
                         </Card>
                     </Col>

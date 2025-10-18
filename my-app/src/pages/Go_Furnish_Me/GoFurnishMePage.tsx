@@ -1,139 +1,164 @@
-import React from 'react';
-import {Form, Input, InputNumber, Select, Button, Card, Row, Col, Typography, Upload, Alert} from 'antd';
-import { ArrowLeftOutlined, InboxOutlined } from '@ant-design/icons';
-import {useNavigate} from "react-router";
+import React, { useState } from 'react';
+import {
+    Form,
+    Input,
+    InputNumber,
+    Select,
+    Button,
+    Upload,
+    message,
+    Steps
+} from 'antd';
+import { InboxOutlined } from '@ant-design/icons';
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import {db} from "../../firebase";
-import {getStorage, ref, uploadBytes, getDownloadURL} from "firebase/storage";
-import {useState} from "react";
+import { db } from "../../firebase";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-const { TextArea } = Input;
+const { Step } = Steps;
 
-const categories = [
-    "Home",
-    "Office",
-    "Outdoor",
-    "Children",
-    "Other"
-];
+interface StepFormData {
+    title: string;
+    goal: string;
+    media: any;
+    category: string;
+    story: string;
+}
+
+const initialFormState: StepFormData = {
+    title: '',
+    goal: '',
+    media: null,
+    category: '',
+    story: ''
+};
+
+// Step 1
+type StepOneProps = {
+    onNext: (values: Pick<StepFormData, "title" | "goal">) => void;
+    initialValues: Partial<StepFormData>;
+};
+function StepOne({ onNext, initialValues }: StepOneProps) {
+    const [form] = Form.useForm();
+    return (
+        <Form form={form} initialValues={initialValues} onFinish={onNext} layout="vertical">
+            <Form.Item
+                label="Fundraiser Title"
+                name="title"
+                rules={[{ required: true, message: "Please enter a fundraiser title!" }]}
+            >
+                <Input placeholder="Enter Fundraiser Title" />
+            </Form.Item>
+            <Form.Item
+                label="Fundraising Goal ($)"
+                name="goal"
+                rules={[{ required: true, message: "Please enter a fundraiser goal!" }]}
+            >
+                <InputNumber style={{ width: '100%' }} placeholder="Enter Fundraiser Goal ($)" />
+            </Form.Item>
+            <Button type="primary" htmlType="submit">Next</Button>
+        </Form>
+    );
+}
+
+// Step 2
+type StepTwoProps = {
+    onNext: (values: Pick<StepFormData, "media" | "category">) => void;
+    onPrev: () => void;
+    initialValues: Partial<StepFormData>;
+};
+function StepTwo({ onNext, onPrev, initialValues }: StepTwoProps) {
+    const [form] = Form.useForm();
+    return (
+        <Form form={form} initialValues={initialValues} onFinish={onNext} layout="vertical">
+            <Form.Item label="Media (Image)" name="media" valuePropName="fileList"
+                       getValueFromEvent={e => Array.isArray(e) ? e : e && e.fileList}
+                       rules={[{ required: true, message: "Please upload a cover photo!" }]}>
+                <Upload.Dragger beforeUpload={() => false} maxCount={1}>
+                    <p className="ant-upload-drag-icon"><InboxOutlined /></p>
+                    <p>Click or drag file to this area to upload</p>
+                </Upload.Dragger>
+            </Form.Item>
+            <Form.Item label="Category" name="category" rules={[{ required: true, message: "Please select a category!" }]}>
+                <Select placeholder="Select a category">
+                    <Select.Option value="medical">Medical</Select.Option>
+                    <Select.Option value="education">Education</Select.Option>
+                    <Select.Option value="emergency">Emergency</Select.Option>
+                </Select>
+            </Form.Item>
+            <Button onClick={onPrev} style={{ marginRight: 8 }}>Previous</Button>
+            <Button type="primary" htmlType="submit">Next</Button>
+        </Form>
+    );
+}
+
+// Step 3
+type StepThreeProps = {
+    onNext: (values: Pick<StepFormData, "story">) => void;
+    onPrev: () => void;
+    initialValues: Partial<StepFormData>;
+};
+function StepThree({ onNext, onPrev, initialValues }: StepThreeProps) {
+    const [form] = Form.useForm();
+    return (
+        <Form form={form} initialValues={initialValues} onFinish={onNext} layout="vertical">
+            <Form.Item label="Fundraiser Story" name="story"
+                       rules={[{ required: true, message: "Please tell your story!" }]}>
+                <Input.TextArea rows={5} placeholder="Enter Fundraiser Story" />
+            </Form.Item>
+            <Button onClick={onPrev} style={{ marginRight: 8 }}>Previous</Button>
+            <Button type="primary" htmlType="submit">Launch Fundraiser</Button>
+        </Form>
+    );
+}
 
 export default function GoFurnishMePage() {
-    const navigate = useNavigate();
     const storage = getStorage();
+    const [formData, setFormData] = useState<StepFormData>(initialFormState);
+    const [current, setCurrent] = useState(0);
 
-    const [form] = Form.useForm();
-    const [createdCampaignId, setCreatedCampaignId] = useState("");
-
-    const handleFinish = async (values: any) => {
-        try {
-            let mediaUrl = "";
-            if (values.media && values.media.length > 0) {
-                const fileObj = values.media[0].originFileObj;
-                const storageRef = ref(storage, `FurnishCampaign/${fileObj.media}`);
+    const handleStepOne = (values: Pick<StepFormData, "title" | "goal">) => {
+        setFormData(prev => ({ ...prev, ...values }));
+        setCurrent(1);
+    };
+    const handleStepTwo = (values: Pick<StepFormData, "media" | "category">) => {
+        setFormData(prev => ({ ...prev, ...values }));
+        setCurrent(2);
+    };
+    const handleStepThree = async (values: Pick<StepFormData, "story">) => {
+        const uploadMedia = async () => {
+            if (formData.media && formData.media[0] && formData.media[0].originFileObj) {
+                const fileObj = formData.media[0].originFileObj;
+                const storageRef = ref(storage, `FurnishCampaign/${fileObj.name}`);
                 await uploadBytes(storageRef, fileObj);
-                mediaUrl = await getDownloadURL(storageRef);
+                return await getDownloadURL(storageRef);
             }
-            const docRef = await addDoc(collection(db, "FurnishCampaign"), {
-                ...values,
-                media: mediaUrl,
+            return "";
+        };
+        try {
+            const mediaUrl = await uploadMedia();
+            const finalData = { ...formData, ...values, media: mediaUrl };
+            await addDoc(collection(db, "FurnishCampaign"), {
+                ...finalData,
                 created: serverTimestamp(),
             });
-            setCreatedCampaignId(docRef.id);
-            form.resetFields();
-            <Alert message="Furnish-raiser launched!" type="success" />;
-        } catch (e) {
-            if (e instanceof Error) {
-                alert("Failed to launch furnish-raiser: " + e.message)
-            }
+            message.success("Furnish-raiser launched!");
+            setFormData(initialFormState);
+            setCurrent(0);
+        } catch (err) {
+            message.error("Failed to launch furnish-raiser");
         }
     };
 
     return (
-        <>
-            <Card
-                style={{ maxWidth: 900, margin: '48px auto', padding: 32 }}
-            >
-                <Button
-                    type="link"
-                    icon={<ArrowLeftOutlined />}
-                    style={{ marginBottom: 16, paddingLeft: 0}}
-                    onClick={() => navigate('/campaign-page')}
-                    >
-                    Back to Campaigns
-                </Button>
-                <Row gutter={[48, 32]} style={{ alignItems: 'flex-start' }}>
-                    {/* Main Form */}
-                    <Col xs={24} md={16}>
-                        <Form
-                            form={form}
-                            layout="vertical"
-                            onFinish={handleFinish}
-                        >
-                            <Form.Item label="Media (Image/Video)" name="media" valuePropName={"fileList"} getValueFromEvent={e => Array.isArray(e) ? e : e && e.fileList}>
-                                <Upload.Dragger>
-                                    <p className="ant-upload-drag-icon">
-                                        <InboxOutlined />
-                                    </p>
-                                    <p className={"ant-upload-text"}>Click or drag file to this area to upload</p>
-                                </Upload.Dragger>
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Fundraiser Title"
-                                name="title"
-                                rules={[{ required: true, message: 'Please enter a fundraiser title' }]}
-                            >
-                                <Input />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Fundraising Goal ($)"
-                                name="goal"
-                                rules={[{ required: true, message: 'Please enter a fundraising goal' }]}
-                            >
-                                <InputNumber style={{ width: '100%' }} min={1} />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Category"
-                                name="category"
-                                rules={[{ required: true, message: 'Please select a category' }]}
-                            >
-                                <Select placeholder="Select a category">
-                                    {categories.map(cat => (
-                                        <Select.Option key={cat} value={cat}>{cat}</Select.Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Location"
-                                name="location"
-                                rules={[{ required: true, message: 'Please enter a location' }]}
-                            >
-                                <Input />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Fundraiser Story"
-                                name="story"
-                                rules={[{ required: true, message: 'Please describe the story' }]}
-                            >
-                                <TextArea rows={4} />
-                            </Form.Item>
-                            <Button
-                                type="primary"
-                                size="large"
-                                style={{ textTransform: 'none', whiteSpace: 'nowrap', width: '100%' }}
-                                onClick={() => form.submit()}
-
-                            >
-                                Launch Fundraiser
-                            </Button>
-                        </Form>
-                    </Col>
-                </Row>
-            </Card>
-        </>
+        <div style={{ maxWidth: 520, margin: "40px auto", background: "#fff", borderRadius: "12px", padding: 24 }}>
+            <Steps current={current} style={{ marginBottom: 32 }}>
+                <Step title="Basic info" />
+                <Step title="Details" />
+                <Step title="Story" />
+            </Steps>
+            {current === 0 && <StepOne onNext={handleStepOne} initialValues={formData} />}
+            {current === 1 && <StepTwo onNext={handleStepTwo} onPrev={() => setCurrent(0)} initialValues={formData} />}
+            {current === 2 && <StepThree onNext={handleStepThree} onPrev={() => setCurrent(1)} initialValues={formData} />}
+        </div>
     );
 }

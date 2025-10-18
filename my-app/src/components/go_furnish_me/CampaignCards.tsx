@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import { Row, Col, Card, Typography, Progress, Tag } from 'antd';
 import {useNavigate} from "react-router";
-import {collection, getDocs} from "firebase/firestore";
+import {collection, doc, getDocs} from "firebase/firestore";
 import {db} from "../../firebase";
-import {CampaignType} from "../../types";
+import {CampaignType} from "../../utils/types";
 
 const { Title, Text } = Typography;
 
@@ -20,7 +20,8 @@ async function getCampaigns() {
         raised: doc.data().raised || 0,
         goal: doc.data().goal || 100,
         story: doc.data().story || '',
-        organizerAvatar: doc.data().organizerAvatar || ''
+        organizerAvatar: doc.data().organizerAvatar || '',
+        userId: doc.data().userId,
     }));
     return campaignList;
 }

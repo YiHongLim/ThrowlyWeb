@@ -85,18 +85,29 @@ const NavBar: React.FC = () => {
       }}
     >
       {/* Left: Logo */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }} onClick={() => navigate("/")} className={"cursor-pointer"}>
+      <button
+        onClick={() => navigate("/")}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          background: "none",
+          border: "none",
+          padding: 0,
+          cursor: "pointer"
+        }}
+        aria-label="Go to home"
+      >
         <img
           src={gutter}
           alt="Throwly Logo"
           style={{ height: "32px" }}
           className={"rounded-md"}
-
         />
         <Title level={4} style={{ margin: 0 }}>
           Throwly
         </Title>
-      </div>
+      </button>
 
       {/* Center Nav Links */}
       <Menu
@@ -104,15 +115,26 @@ const NavBar: React.FC = () => {
         defaultSelectedKeys={[]}
         style={{ flex: 1, justifyContent: "center", borderBottom: "none" }}
       >
-        <Menu.Item key="shop">Shop Local</Menu.Item>
+        <Menu.Item key="shop">
+          <a href={"/listings"}>Shop Local</a>
+        </Menu.Item>
         <Menu.Item key="categories">
-          <a href={"/listings"}>Categories</a>
+          <a href="/categories">Categories</a>
           </Menu.Item>
         <Menu.Item key="furnish">
           <a href="/campaign-page">Go Furnish Me</a>
         </Menu.Item>
+          <Menu.Item key="estimate-listing">
+              <a href="/estimate-listing">AI Estimate</a>
+          </Menu.Item>
         <Menu.Item key="overview">Overview</Menu.Item>
-        <Menu.Item key="about">About Throwly</Menu.Item>
+
+        <Menu.Item key="about">
+          <a href="/about">About Throwly</a>
+        </Menu.Item>
+        <Menu.Item key="faq">
+          <a href="/faq">FAQ</a>
+        </Menu.Item>
 
       </Menu>
 
@@ -163,7 +185,7 @@ const NavBar: React.FC = () => {
         
         <Button
           type="primary"
-          style={{ backgroundColor: "#ff6b00", border: "none" }}
+          style={{ backgroundColor: "#fc5c65", border: "none" }}
         >
           Post
         </Button>

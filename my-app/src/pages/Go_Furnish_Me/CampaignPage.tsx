@@ -18,17 +18,6 @@ function CampaignPage() {
                     imageUrl={moving}
                     bgUrl={bgImage}
                 />
-      {/*          <div style={{ margin: "40px 0", width: "100%" }}>*/}
-      {/*              <svg viewBox="0 0 1440 100" width="100%" height="100" preserveAspectRatio="none">*/}
-      {/*                  <path d="M0,30 C360,90 1080,0 1440,60 L1440,100 L0,100 Z" fill="#d44b4f">*/}
-      {/*                      <animate attributeName="d" values="*/}
-      {/*  M0,30 C360,90 1080,0 1440,60 L1440,100 L0,100 Z;*/}
-      {/*  M0,50 C400,0 1040,100 1440,30 L1440,100 L0,100 Z;*/}
-      {/*  M0,30 C360,90 1080,0 1440,60 L1440,100 L0,100 Z*/}
-      {/*" dur="8s" repeatCount="indefinite" />*/}
-      {/*                  </path>*/}
-      {/*              </svg>*/}
-      {/*          </div>*/}
                 <Divider />
                 <CampaignCards />
             </main>
