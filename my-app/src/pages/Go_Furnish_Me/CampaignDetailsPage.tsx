@@ -17,7 +17,8 @@ export default function CampaignDetailsPage() {
     const [campaign, setCampaign] = useState<CampaignType | null>(null);
     const { currentUser } = useAuth();
     const userId = currentUser?.uid;
-    const isSelfDonation = userId === campaign?.userId;
+
+    const isSelfDonation = userId && campaign?.userId && userId === campaign?.userId;
 
     useEffect(() => {
         async function fetchCampaign() {
@@ -37,7 +38,7 @@ export default function CampaignDetailsPage() {
                     raised: docData?.raised ?? 0,             // Use 0 if undefined
                     story: docData?.story || "",
                     title: docData?.title || "",
-                    userId: userId || "",
+                    userId: docData?.userId || "",
                 });
             } else {
                 setCampaign(null);
@@ -50,6 +51,7 @@ export default function CampaignDetailsPage() {
     }
 
     return (
+
         <div style={{
             minHeight: "100vh",
             background: "#fafafa",
@@ -60,6 +62,7 @@ export default function CampaignDetailsPage() {
                 margin: "0 auto",
                 padding: "0 16px"
             }}>
+
                 <Title level={2} style={{ fontWeight: 800, marginBottom: 24 }}>
                     {campaign.title}
                 </Title>
@@ -108,21 +111,11 @@ export default function CampaignDetailsPage() {
                             background: "#fff",
                             marginBottom: 32
                         }}>
-                            <Text style={{ fontWeight: 700, fontSize: 24 }}>{`$${campaign.raised.toLocaleString()}`}</Text>
-                            <Text style={{ marginLeft: 8 }} type="secondary">{`raised`}</Text>
-                            <br />
-                            <Text type="secondary" style={{ fontSize: 13 }}>{`$${(campaign.goal / 1000).toLocaleString()}k goal`}</Text>
-                            <div style={{ margin: '10px 0 22px' }}>
-                                <Progress
-                                    percent={Math.round((campaign.raised / campaign.goal) * 100)}
-                                    showInfo={false}
-                                    strokeColor="#60c130"
-                                    trailColor="#e1e1e1"
-                                    style={{ height: 10 }}
-                                />
-                            </div>
                             <ShareCampaignButton campaignId={campaign.id} />
-                            <DonateNowButton campaign={campaign} />
+                            {!isSelfDonation
+                            ? <DonateNowButton campaign={campaign} />
+                                : <div style={{color: "red"}}>You cannot donate to your own campaign</div>
+                            }
                             <Divider />
                             {/* Recent donation examples */}
                             <div>

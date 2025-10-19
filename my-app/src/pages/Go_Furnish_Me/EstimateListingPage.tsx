@@ -197,14 +197,6 @@ const EstimateListingPage: React.FC = () => {
                     )}
                 </div>
             </Col>
-            {/* Divider */}
-            {/*<Col xs={0} md={2}*/}
-            {/*     style={{*/}
-            {/*         display: "flex",*/}
-            {/*         height: '100%',*/}
-            {/*         alignItems: "center",*/}
-            {/*         justifyContent: "center"*/}
-            {/*     }}>*/}
                 <Divider type="vertical" style={{ height: '100%', minHeight: 280, borderWidth: 2, background: "#e2eafd", borderRadius: 6, margin: 0, display: window.innerWidth < 768? "none" : "block" }} />
             {/*</Col>*/}
             {/* Right side: Output */}

@@ -13,6 +13,7 @@ import { InboxOutlined } from '@ant-design/icons';
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../../firebase";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {useAuth} from "../../context/useAuth";
 
 const { Step } = Steps;
 
@@ -115,6 +116,7 @@ export default function GoFurnishMePage() {
     const storage = getStorage();
     const [formData, setFormData] = useState<StepFormData>(initialFormState);
     const [current, setCurrent] = useState(0);
+    const { currentUser } = useAuth();
 
     const handleStepOne = (values: Pick<StepFormData, "title" | "goal">) => {
         setFormData(prev => ({ ...prev, ...values }));
@@ -139,6 +141,7 @@ export default function GoFurnishMePage() {
             const finalData = { ...formData, ...values, media: mediaUrl };
             await addDoc(collection(db, "FurnishCampaign"), {
                 ...finalData,
+                userId: currentUser?.uid,
                 created: serverTimestamp(),
             });
             message.success("Furnish-raiser launched!");

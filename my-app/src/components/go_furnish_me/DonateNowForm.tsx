@@ -109,7 +109,6 @@ const fetchEstimate = async () => {
         const llmPrice = priceResult.listing.llmPrice;
         setEstimatedAmount(llmPrice);
         setPriceExplanation(priceResult.listing.priceExplanation);
-        console.log('Estimate:', llmPrice , { url: imageUrls[0], description });
     } catch (e) {
         console.error("Estimation error:", e, { url: imageUrls[0], description });
     } finally {
@@ -179,7 +178,6 @@ const fetchEstimate = async () => {
                         </div>
                     )
                 )}
-
 
                 <Form.Item label="Campaign Visibility" name={"isPublic"} valuePropName={"checked"} initialValue={true}>
                     <Switch checkedChildren={"Public"} unCheckedChildren={"Private"} />
