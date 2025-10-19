@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Button, Typography, Row, Col, Avatar, List } from "antd";
+import { Card, Button, Typography, Row, Col, Avatar, List, Collapse } from "antd";
 import { 
   ThunderboltOutlined, 
   HeartOutlined, 
@@ -9,11 +9,17 @@ import {
   CameraOutlined,
   EnvironmentFilled,
   TeamOutlined,
-  ShopOutlined
+  ShopOutlined,
+  PlusOutlined,
+  GlobalOutlined,
+  LinkOutlined
 } from "@ant-design/icons";
 import blobBackground from "../../assets/images/gofurnishme_images/blob-scene-haikei-1.svg";
+import AppStoreImage from "../../assets/images/Download_images/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.jpg";
+import GooglePlayImage from "../../assets/images/Download_images/GetItOnGooglePlay_Badge_Web_color_English.png";
 
 const { Title, Paragraph, Text } = Typography;
+const { Panel } = Collapse;
 
 const AboutUs: React.FC = () => {
   const containerStyle: React.CSSProperties = {
@@ -90,6 +96,112 @@ const AboutUs: React.FC = () => {
   const contactInfo = [
     { icon: <MailOutlined />, label: "Email", value: "support@throwly.com" },
     { icon: <EnvironmentOutlined />, label: "Location", value: "Ames, Iowa" }
+  ];
+
+  const faqData = [
+    {
+      key: "1",
+      question: "Can you buy things outright?",
+      answer: "Yes. On the Home screen, look in the listings. Items posted with a set price are sold for money. You can text the seller, negotiate if needed, and arrange payment using your agreed method."
+    },
+    {
+      key: "2", 
+      question: "How do you post items?",
+      answer: "Go to the Add Listing page (center button in the app). Upload images, add a title and description. If you leave price = 0 → it's a free item, AI assigns points. If you set a price → it's sold with money."
+    },
+    {
+      key: "3",
+      question: "How do you show interest in an item?",
+      answer: "For paid items: Tap the seller's profile on the listing page, then hit Text to message them. For free items: You need enough points. If you do, you can text to arrange pickup. If you also have points for transport, you'll see a Checkout button."
+    },
+    {
+      key: "4",
+      question: "How do you transfer points?",
+      answer: "After meeting and exchanging the item, open your chat with the seller and swipe up. This triggers the point transfer instantly."
+    },
+    {
+      key: "5",
+      question: "How many points do you start with?",
+      answer: "Every user starts with $50 in points to begin donating, trading, and building community karma."
+    },
+    {
+      key: "6",
+      question: "How does Throwly ensure safety?",
+      answer: "Accounts are verified. Most exchanges use points instead of real money. We discourage unsafe in-person meetups and scams."
+    },
+    {
+      key: "7",
+      question: "Who wins prizes?",
+      answer: "Each month, the top donor (most points per city) wins community prizes."
+    },
+    {
+      key: "8",
+      question: "How/What location info is shown?",
+      answer: "Item locations only appear if the seller chooses to show them. Any item shown on the map stays visible for 7 days. For free items, showing how close it is helps the item get picked up faster. For paid items, sellers can still opt in for extra visibility, with the understanding of the added exposure. We never show or share your exact personal location. For tweets, we only show approximate distance. If it's under 5 miles, we say 'in town.' On listing screens, we display only how far away the item is—not your address."
+    },
+    {
+      key: "9",
+      question: "How does Throwly use my location?",
+      answer: "To find nearby items. To calculate transport costs. To show local events, services, and volunteer gigs. To run city-specific leaderboards, prizes, and notifications."
+    },
+    {
+      key: "10",
+      question: "How does Throwly use notifications?",
+      answer: "To alert you when buyers or sellers send you messages."
+    },
+    {
+      key: "11",
+      question: "How do you stop people from gaming the system?",
+      answer: "We track device usage and ID verification (e.g., phone, DL in the future)."
+    },
+    {
+      key: "12",
+      question: "Why Throwly?",
+      answer: "Throwly builds the world's biggest free marketplace—rewarding givers, empowering communities, and removing the pain of scams, no-shows, ghosting, haggling, and unsafe exchanges."
+    },
+    {
+      key: "13",
+      question: "Do you get rewards for referrals?",
+      answer: "Yes! You earn $10 in points for each friend you refer."
+    }
+  ];
+
+  const mediaLinks = [
+    {
+      title: "Applied AI Challenge - Congratulations to 2025 Participants",
+      url: "https://www.facebook.com/CyclonesInnov8/posts/congratulations-to-the-2025-applied-ai-challenge-participants-and-scholarship-wi/1207285808067166/",
+      description: "Cyclones Innov8 celebrates the 2025 Applied AI Challenge participants and scholarship winners."
+    },
+    {
+      title: "Applied AI Challenge Showcases Student Innovation",
+      url: "https://sictr.iastate.edu/2025/03/20/applied-ai-challenge-showcases-student-innovation/",
+      description: "SICTR highlights student innovation at the Applied AI Challenge showcase."
+    },
+    {
+      title: "Innovate at Iowa State",
+      url: "https://sictr.iastate.edu/innovate-at-iowa-state/",
+      description: "Discover innovation opportunities at Iowa State University."
+    },
+    {
+      title: "LinkedIn Activity - Innovation Update",
+      url: "https://www.linkedin.com/feed/update/urn:li:activity:6923745918873735168/",
+      description: "LinkedIn post about innovation and development progress."
+    },
+    {
+      title: "LinkedIn Activity - Project Update",
+      url: "https://www.linkedin.com/feed/update/urn:li:activity:7308874340756770816/",
+      description: "Recent project updates and achievements shared on LinkedIn."
+    },
+    {
+      title: "Vibe Coding: Senior Devs as AI Babysitters",
+      url: "https://techcrunch.com/2025/09/14/vibe-coding-has-turned-senior-devs-into-ai-babysitters-but-they-say-its-worth-it/",
+      description: "TechCrunch explores how AI is transforming the role of senior developers."
+    },
+    {
+      title: "Earth Day Celebrations",
+      url: "https://iowastatedaily.com/317511/news/see-whats-store-for-earth-day-celebrations/",
+      description: "Iowa State Daily coverage of Earth Day celebration events."
+    }
   ];
 
   const innovations = [
@@ -325,6 +437,214 @@ const AboutUs: React.FC = () => {
           </Row>
         </Card>
 
+        {/* FAQ Section */}
+        <Card 
+          style={cardStyle} 
+          bodyStyle={{ padding: "60px" }}
+          onMouseEnter={(e) => {
+            Object.assign(e.currentTarget.style, cardHoverStyle);
+          }}
+          onMouseLeave={(e) => {
+            Object.assign(e.currentTarget.style, cardStyle);
+          }}
+        >
+          <Title level={2} style={{ textAlign: "center", fontSize: "32px", fontWeight: "bold", color: "#1a202c", marginBottom: "32px" }}>
+            Frequently Asked Questions
+          </Title>
+          <Collapse
+            expandIcon={({ isActive }) => (
+              <PlusOutlined 
+                style={{ 
+                  color: "#ff6f73", 
+                  fontSize: "16px",
+                  transform: isActive ? "rotate(45deg)" : "rotate(0deg)",
+                  transition: "transform 0.3s ease"
+                }} 
+              />
+            )}
+            expandIconPosition="right"
+            style={{
+              backgroundColor: "transparent",
+              border: "none"
+            }}
+          >
+            {faqData.map((faq) => (
+              <Panel
+                key={faq.key}
+                header={
+                  <Text style={{ 
+                    fontSize: "18px", 
+                    fontWeight: "700", 
+                    color: "#ff6f73",
+                    lineHeight: "1.4"
+                  }}>
+                    {faq.question}
+                  </Text>
+                }
+                style={{
+                  marginBottom: "16px",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "12px",
+                  backgroundColor: "#ffffff"
+                }}
+                showArrow={true}
+              >
+                <Text style={{ 
+                  fontSize: "16px", 
+                  lineHeight: "1.6", 
+                  color: "#64748b",
+                  display: "block",
+                  paddingTop: "8px"
+                }}>
+                  {faq.answer}
+                </Text>
+              </Panel>
+            ))}
+          </Collapse>
+        </Card>
+
+        {/* Media Section */}
+        <Card 
+          style={cardStyle} 
+          bodyStyle={{ padding: "60px" }}
+          onMouseEnter={(e) => {
+            Object.assign(e.currentTarget.style, cardHoverStyle);
+          }}
+          onMouseLeave={(e) => {
+            Object.assign(e.currentTarget.style, cardStyle);
+          }}
+        >
+          <div style={{ textAlign: "center", marginBottom: "32px" }}>
+            <Avatar
+              size={64}
+              style={{
+                background: "linear-gradient(135deg, #ff6f73 0%, #ff4757 100%)",
+                marginBottom: "16px"
+              }}
+              icon={<GlobalOutlined style={{ fontSize: "32px", color: "white" }} />}
+            />
+            <Title level={2} style={{ fontSize: "32px", fontWeight: "bold", color: "#1a202c", marginBottom: "16px" }}>
+              Media Coverage
+            </Title>
+            <Paragraph style={{ color: "#64748b", fontSize: "16px", maxWidth: "700px", margin: "0 auto" }}>
+              Learn more about our journey, achievements, and the impact we're making in the community.
+            </Paragraph>
+          </div>
+
+          <List
+            grid={{ 
+              gutter: 24,
+              xs: 1,
+              sm: 1,
+              md: 2,
+              lg: 2,
+              xl: 2,
+              xxl: 2
+            }}
+            dataSource={mediaLinks}
+            renderItem={(item) => (
+              <List.Item>
+                <Card
+                  hoverable
+                  style={{
+                    borderRadius: "12px",
+                    border: "1px solid #e2e8f0",
+                    height: "100%"
+                  }}
+                  bodyStyle={{ padding: "24px" }}
+                  onClick={() => window.open(item.url, '_blank')}
+                >
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: "16px" }}>
+                    <LinkOutlined style={{ fontSize: "24px", color: "#ff6f73", marginTop: "4px" }} />
+                    <div style={{ flex: 1 }}>
+                      <Title level={4} style={{ 
+                        fontSize: "16px", 
+                        fontWeight: "600", 
+                        color: "#1a202c", 
+                        marginBottom: "8px",
+                        margin: "0 0 8px 0"
+                      }}>
+                        {item.title}
+                      </Title>
+                      <Paragraph style={{ 
+                        color: "#64748b", 
+                        fontSize: "14px", 
+                        lineHeight: "1.6",
+                        margin: 0
+                      }}>
+                        {item.description}
+                      </Paragraph>
+                    </div>
+                  </div>
+                </Card>
+              </List.Item>
+            )}
+          />
+        </Card>
+
+        {/* App Download Section */}
+        <Card 
+          style={cardStyle} 
+          bodyStyle={{ padding: "60px", textAlign: "center" }}
+          onMouseEnter={(e) => {
+            Object.assign(e.currentTarget.style, cardHoverStyle);
+          }}
+          onMouseLeave={(e) => {
+            Object.assign(e.currentTarget.style, cardStyle);
+          }}
+        >
+          <Title level={2} style={{ fontSize: "32px", fontWeight: "bold", color: "#FF6B35", marginBottom: "16px" }}>
+            Discover great finds today!
+          </Title>
+          <Title level={3} style={{ fontSize: "24px", fontWeight: "bold", color: "#1a202c", marginBottom: "32px" }}>
+            Get the app
+          </Title>
+          <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
+            <a 
+              href="https://apps.apple.com/us/app/throwly/id1615326703?platform=iphone" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ textDecoration: "none" }}
+            >
+              <img 
+                src={AppStoreImage} 
+                alt="Download on the App Store" 
+                style={{ 
+                  height: "50px",
+                  width: "150px",
+                  borderRadius: "6px",
+                  transition: "transform 0.2s ease",
+                  cursor: "pointer",
+                  objectFit: "cover"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
+                onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+              />
+            </a>
+            <a 
+              href="https://play.google.com/store/apps/details?id=com.Gutter" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ textDecoration: "none" }}
+            >
+              <img 
+                src={GooglePlayImage} 
+                alt="Get it on Google Play" 
+                style={{ 
+                  height: "50px",
+                  width: "150px",
+                  borderRadius: "6px",
+                  transition: "transform 0.2s ease",
+                  cursor: "pointer",
+                  objectFit: "cover"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
+                onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+              />
+            </a>
+          </div>
+        </Card>
+
         {/* Team Section  - commented out for now
         <Card style={cardStyle} bodyStyle={{ padding: "48px" }}>
           <Title level={2} style={{ textAlign: "center", fontSize: "32px", fontWeight: "bold", color: "#1a202c", marginBottom: "32px" }}>
@@ -360,86 +680,6 @@ const AboutUs: React.FC = () => {
           </Row>
         </Card>
         */}
-        {/* Contact & CTA Section */}
-        <Card 
-          style={cardStyle} 
-          bodyStyle={{ padding: "60px", textAlign: "center" }}
-          onMouseEnter={(e) => {
-            Object.assign(e.currentTarget.style, cardHoverStyle);
-          }}
-          onMouseLeave={(e) => {
-            Object.assign(e.currentTarget.style, cardStyle);
-          }}
-        >
-          <Title level={2} style={{ fontSize: "32px", fontWeight: "bold", color: "#1a202c", marginBottom: "24px" }}>
-            Ready to Give & Get Locally?
-          </Title>
-          <Paragraph style={{ color: "#64748b", marginBottom: "32px", maxWidth: "600px", margin: "0 auto 32px auto", fontSize: "16px", lineHeight: "1.6" }}>
-            Turn your unused items into rewards and discover what your community has to offer. With Throwly, sustainable living has never been easier.
-          </Paragraph>
-          
-          <div style={{ marginBottom: "32px" }}>
-            <Button
-              type="primary"
-              size="large"
-              style={gradientButtonStyle}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "scale(1.02)";
-                e.currentTarget.style.boxShadow = "0 12px 30px rgba(255,71,87,0.45)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
-                e.currentTarget.style.boxShadow = "0 4px 15px rgba(255,111,115,0.4)";
-              }}
-            >
-              Download now
-            </Button>
-            
-            <Button
-              size="large"
-              style={{
-                ...outlineButtonStyle,
-                marginLeft: "16px"
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "#ff6f73";
-                e.currentTarget.style.color = "white";
-                e.currentTarget.style.transform = "scale(1.02)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "white";
-                e.currentTarget.style.color = "#ff6f73";
-                e.currentTarget.style.transform = "scale(1)";
-              }}
-            >
-              Browse Throwly
-            </Button>
-          </div>
-
-          <div style={{ borderTop: "1px solid #e2e8f0", paddingTop: "40px", marginTop: "40px" }}>
-            <Row gutter={[48, 32]} justify="center">
-              {contactInfo.map((info, index) => (
-                <Col xs={24} sm={12} key={index} style={{ textAlign: "center" }}>
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                    <div style={{ 
-                      fontSize: "20px", 
-                      color: "#ff6f73", 
-                      marginBottom: "8px" 
-                    }}>
-                      {info.icon}
-                    </div>
-                    <Title level={4} style={{ fontSize: "16px", fontWeight: "600", color: "#1a202c", marginBottom: "8px" }}>
-                      {info.label}
-                    </Title>
-                    <Text style={{ color: "#64748b", fontSize: "16px", whiteSpace: "pre-line" }}>
-                      {info.value}
-                    </Text>
-                  </div>
-                </Col>
-              ))}
-            </Row>
-          </div>
-        </Card>
       </div>
     </div>
   );

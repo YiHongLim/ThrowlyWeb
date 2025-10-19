@@ -1,7 +1,9 @@
 import React from "react";
 import { Layout, Typography, Row, Col, Card } from "antd";
 import SearchBar from "../../components/home/SearchBar";
-import {electronics, furniture, home, kids, womens, mens, apple, playstore} from "../../assets/images/home_images";
+import {electronics, furniture, home, kids, womens, mens} from "../../assets/images/home_images";
+import AppStoreImage from "../../assets/images/Download_images/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.jpg";
+import GooglePlayImage from "../../assets/images/Download_images/GetItOnGooglePlay_Badge_Web_color_English.png";
 
 const { Content, Footer } = Layout;
 const { Title, Text } = Typography;
@@ -69,8 +71,48 @@ export default function Home() {
           </Title>
           <Text>Get the app</Text>
           <div style={{ display: "flex", gap: "16px", marginTop: "20px" }}>
-            <img src= {apple} alt="App Store" style={{ height: "40px" }} />
-            <img src= {playstore} alt="Google Play" style={{ height: "40px" }} />
+            <a 
+              href="https://apps.apple.com/us/app/throwly/id1615326703?platform=iphone" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ textDecoration: "none" }}
+            >
+              <img 
+                src={AppStoreImage} 
+                alt="Download on the App Store" 
+                style={{ 
+                  height: "50px",
+                  width: "150px",
+                  borderRadius: "6px",
+                  transition: "transform 0.2s ease",
+                  cursor: "pointer",
+                  objectFit: "cover"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
+                onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+              />
+            </a>
+            <a 
+              href="https://play.google.com/store/apps/details?id=com.Gutter" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ textDecoration: "none" }}
+            >
+              <img 
+                src={GooglePlayImage} 
+                alt="Get it on Google Play" 
+                style={{ 
+                  height: "50px",
+                  width: "150px",
+                  borderRadius: "6px",
+                  transition: "transform 0.2s ease",
+                  cursor: "pointer",
+                  objectFit: "cover"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
+                onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+              />
+            </a>
           </div>
         </div>
 

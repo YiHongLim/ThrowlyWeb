@@ -16,6 +16,9 @@ import DonationListPage from "./pages/Go_Furnish_Me/DonationListPage";
 import FAQ from './pages/Home/FAQ';
 import EstimateListingPage from "./pages/Go_Furnish_Me/EstimateListingPage";
 import Categories from './pages/Categories/Category';
+import TermsAndConditions from './pages/TermsAndConditions';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import Overview from './pages/Overview';
 
 function App() {
     return (
@@ -35,6 +38,9 @@ function App() {
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/FAQ" element={<FAQ />} />
+                <Route path="/terms" element={<TermsAndConditions />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/overview" element={<Overview />} />
             </Routes>
         </RootLayout>
     );
