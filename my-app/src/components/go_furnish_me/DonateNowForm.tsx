@@ -17,8 +17,7 @@ type DonateNowFormProps = {
 
 const { TextArea } = Input;
 // TEMP: Replace these with real values as needed
-const latitude = 37.7749;   // e.g., from geolocation or props
-const longitude = -122.4194;  // e.g., from geolocation or props
+
 const username = "user_jt7bdy"; // e.g., from auth context
 const model = "claude-3-haiku-20240307"; // or your target model
 
@@ -89,42 +88,34 @@ const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubm
         }
     };
 
-    /** Fetch estimate listing price **/
-    useEffect(() => {
-        // Only run if both an uploaded Firebase image URL and a non-empty description are available
-        if (imageUrls.length > 0 && description.trim() !== '' && !uploading) {
+/** Fetch estimate listing price **/
+// Firebase image URL and a non-empty description are available
 
-            const debouncedFetch = debounce(async () => {
-                setIsEstimating(true);
-                console.log("Estimating...");
-                // console.log("Uploading flag:", uploading);
-                const fetchEstimate = async () => {
-                    try {
-                        // Always use the Firebase Storage URL, not a blob!
-                        const priceResult = await getLLMPrice(
-                            [imageUrls[0]],
-                            description,
-                            username,
-                            model
-                        );
-                        const llmPrice = priceResult.listing.llmPrice;
-                        setEstimatedAmount(llmPrice);
-                        setPriceExplanation(priceResult.listing.priceExplanation);
-                        console.log('Estimate:', llmPrice , { url: imageUrls[0], description });
-                    } catch (e) {
-                        console.error("Estimation error:", e, { url: imageUrls[0], description });
-                    }
-                };
-                try {
-                    await fetchEstimate();
-                } finally {
-                    setIsEstimating(false);
-                }
-            }, 2000);
-            debouncedFetch();
-            return() => debouncedFetch.cancel();
-        }
-    }, [imageUrls, description, uploading]);
+const fetchEstimate = async () => {
+    if (imageUrls.length === 0 || description.trim() === '') {
+        message.warning("Please upload an image and enter a description.");
+        return;
+    }
+    setIsEstimating(true);
+
+    try {
+        // Always use the Firebase Storage URL, not a blob!
+        const priceResult = await getLLMPrice(
+            [imageUrls[0]],
+            description,
+            username,
+            model
+        );
+        const llmPrice = priceResult.listing.llmPrice;
+        setEstimatedAmount(llmPrice);
+        setPriceExplanation(priceResult.listing.priceExplanation);
+        console.log('Estimate:', llmPrice , { url: imageUrls[0], description });
+    } catch (e) {
+        console.error("Estimation error:", e, { url: imageUrls[0], description });
+    } finally {
+    setIsEstimating(false);
+}
+};
 
     useEffect(() => {
         if (estimatedAmount != null) {
@@ -168,36 +159,27 @@ const DonateNowForm: React.FC<DonateNowFormProps> = ({ visible, onCancel, onSubm
                 >
                     <TextArea rows={2} placeholder="Describe item(s), quantity, brand, condition, etc." />
                 </Form.Item>
-                {
-                    <div> Points </div>
-                }
+                <Button type="default" onClick={fetchEstimate}>Get Estimate</Button>
+                
                 {isEstimating ? (
                     <Spin style={{ marginBottom: 16 }} tip={"Estimating points for item..."}>
                         <div style={{minHeight: 40}} />
                     </Spin>
                 ) : (
+                    
                     estimatedAmount !== null && (
-                        <div style={{ marginBottom: 16, color: '#1890ff', fontWeight: 500 }}>
-                             {estimatedAmount}
+                        <div style={{ margin: 10, color: '#1890ff', fontWeight: 500, }}>
+                            Estimated Price: {estimatedAmount} <br />
+                            <div style={{ fontWeight: 700, color: 'black'}}>
+                            Price Explanation:
+                            </div>
+                            <div style={{ color: '#888', fontStyle: 'italic' }}>
+                                {priceExplanation}
+                            </div>
                         </div>
                     )
                 )}
 
-
-                {/*<Form.Item*/}
-                {/*    label="Points"*/}
-                {/*    name="points"*/}
-                {/*>*/}
-                {/*    <Spin spinning={isEstimating} tip={"Estimating points for item..."}>*/}
-
-                {/*    <InputNumber min={1} style={{ width: '100%' }} readOnly={true} value={estimatedAmount ?? 0} formatter={value => `$${value}`}/>*/}
-                {/*    </Spin>*/}
-                {/*</Form.Item>*/}
-                <Form.Item label="Price explanation">
-                    <div style={{ color: '#888', fontStyle: 'italic' }}>
-                        {priceExplanation}
-                    </div>
-                </Form.Item>
 
                 <Form.Item label="Campaign Visibility" name={"isPublic"} valuePropName={"checked"} initialValue={true}>
                     <Switch checkedChildren={"Public"} unCheckedChildren={"Private"} />

@@ -9,6 +9,7 @@ import {useNavigate} from "react-router";
 const DonateNowButton: React.FC<{ campaign: CampaignType }> = ({ campaign }) => {
     const [showDonate, setShowDonate] = useState(false);
     const navigate = useNavigate();
+
     const handleOpen = () => {
         const auth = getAuth();
         const currentUser = auth.currentUser;
@@ -16,7 +17,12 @@ const DonateNowButton: React.FC<{ campaign: CampaignType }> = ({ campaign }) => 
             navigate('/login');
             return;
         }
-        console.log(currentUser);
+        console.log(currentUser.uid);
+        console.log(campaign.userId);
+        if (currentUser.uid === campaign.userId) {
+            alert("You cannot donate to your own campaign.");
+            return;
+        }
         setShowDonate(true);
     }
     // Handle successful submit

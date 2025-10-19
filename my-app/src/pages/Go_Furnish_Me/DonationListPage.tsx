@@ -12,8 +12,7 @@ const DonationListPage:React.FC = () => {
 
     const [items, setItems] = useState<DonationItem[]>([]);
     const { id } = useParams<{ id: string }>();
-
-
+    
     /** Get ID from CampaignDonations collection and compare; Use it to retrieve info from CampaignDonations **/
     useEffect(() => {
         if (!id) return;
@@ -22,6 +21,9 @@ const DonationListPage:React.FC = () => {
             const q = query(
                 collection(db, "CampaignDonations"),
                 where("campaignId", "==", id),
+            )
+            const qPublic = query(
+                collection(db, "CampaignDonations", "isPublic")
             )
             const snap = await getDocs(q);
             const rows = snap.docs.map(doc => ({
@@ -100,8 +102,6 @@ return (
                                                     level={5}
                                                     style={{
                                                         maxWidth: 350,
-
-
                                                     }}
                                                 >
                                                     {it.title}
@@ -155,9 +155,7 @@ return (
                             </Col>
                         ))}
                     </Row>
-
                     <Divider />
-
                     <Card style={{ borderRadius:12 }}>
                         <Row justify="space-between" align="middle">
                             <Col>
@@ -174,7 +172,5 @@ return (
     </Layout>
     );
 };
-
-
 
 export default DonationListPage;

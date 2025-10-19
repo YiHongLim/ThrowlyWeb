@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { auth, db } from "../../firebase";
 import { onAuthStateChanged, User, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
+import { useAdmin } from "../admin/adminFunctions";
+import { SettingOutlined } from "@ant-design/icons";
 import {gutter} from "../../assets/images/home_images";
 const { Header } = Layout;
 const { Title } = Typography;
@@ -32,6 +34,7 @@ const NavBar: React.FC = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [username, setUsername] = useState<string | null>(null);
+  const { isAdmin } = useAdmin(user);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -121,11 +124,17 @@ const NavBar: React.FC = () => {
         <Menu.Item key="furnish">
           <a href="/campaign-page">Go Furnish Me</a>
         </Menu.Item>
+        <Menu.Item key="estimate-listing">
+          <a href="/estimate-listing">AI Estimate</a>
+        </Menu.Item>
         <Menu.Item key="overview">
           <a href="/overview">Overview</a>
         </Menu.Item>
         <Menu.Item key="about">
-          <a href="/about">About</a>
+          <a href="/about">About Throwly</a>
+        </Menu.Item>
+        <Menu.Item key="faq">
+          <a href="/faq">FAQ</a>
         </Menu.Item>
       </Menu>
 
@@ -157,6 +166,23 @@ const NavBar: React.FC = () => {
             Sign In
           </Button>
         )}
+        
+        {/* Admin Button - Only show if user is admin */}
+        {user && isAdmin && (
+          <Button
+            type="default"
+            icon={<SettingOutlined />}
+            onClick={() => navigate("/admin")}
+            style={{ 
+              backgroundColor: "#52c41a", 
+              borderColor: "#52c41a",
+              color: "white"
+            }}
+          >
+            Admin
+          </Button>
+        )}
+        
         <Button
           type="primary"
           style={{ backgroundColor: "#fc5c65", border: "none" }}
