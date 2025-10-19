@@ -3,12 +3,10 @@ import { Row, Col, Card, Typography, Button, Progress, Avatar, Divider, Tag } fr
 import {doc, getDoc} from "firebase/firestore";
 import {db} from "../../firebase";
 import {useParams} from "react-router";
-import {CampaignType} from "../../utils/types";
 import DonateNowButton from "../../components/go_furnish_me/DonateNowButton";
-import {withAuthProtection} from "../../components/WithAuthProtection";
-import shareCampaignButton from "../../components/go_furnish_me/ShareCampaignButton";
 import ShareCampaignButton from "../../components/go_furnish_me/ShareCampaignButton";
 import {useAuth} from "../../context/useAuth";
+import {CampaignType} from "../../types";
 
 const { Title, Paragraph, Text } = Typography;
 

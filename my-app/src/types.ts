@@ -1,3 +1,5 @@
+import {number} from "framer-motion";
+
 export type CampaignType = {
     id: string;
     title: string;
@@ -9,8 +11,26 @@ export type CampaignType = {
     goal: number;
     story: string;
     organizerAvatar?: string;
+    userId: string;
 }
 
+export type DonationItem = {
+    id: string;
+    userId: string;
+    media: string;
+    title: string;
+    amount: number;
+    description: string;
+    isPublic: boolean;
+    campaignId: string;
+    firstName: string;
+    lastName: string;
+};
+
+export interface Categories {
+    label: string;
+    value: string;
+}
 interface imageProps {
     thumbnailUrl: string;
     url: string;

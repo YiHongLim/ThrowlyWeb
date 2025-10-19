@@ -3,7 +3,7 @@ import { Row, Col, Card, Typography, Progress, Tag } from 'antd';
 import {useNavigate} from "react-router";
 import {collection, doc, getDocs} from "firebase/firestore";
 import {db} from "../../firebase";
-import {CampaignType} from "../../utils/types";
+import {CampaignType} from "../../types";
 
 const { Title, Text } = Typography;
 

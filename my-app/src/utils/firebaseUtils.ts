@@ -1,6 +1,6 @@
 import {doc, getDoc} from "firebase/firestore";
 import {db} from "../firebase";
-import {DonationItem} from "./types";
+import {DonationItem} from "../types";
 
 export const fetchDonorNames = async (donations: DonationItem[]): Promise<DonationItem[]> => {
     const userIds = donations

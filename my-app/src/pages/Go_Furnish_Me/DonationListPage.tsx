@@ -3,9 +3,9 @@ import {useEffect, useState} from "react";
 import {Text} from "lucide-react";
 import {db} from "../../firebase";
 import {collection, doc, getDoc, getDocs, query, where} from "firebase/firestore";
-import {CampaignType, DonationItem} from "../../utils/types";
 import {useParams} from "react-router";
 import {fetchDonorNames} from "../../utils/firebaseUtils";
+import {DonationItem} from "../../types";
 
 
 const DonationListPage:React.FC = () => {
