@@ -133,6 +133,9 @@ const NavBar: React.FC = () => {
         <Menu.Item key="about">
           <a href="/about">About</a>
         </Menu.Item>
+        <Menu.Item key="chatbot">
+          <a href="/chatbot">AI Assistant</a>
+        </Menu.Item>
       </Menu>
 
       {/* Right Auth Buttons and Cart */}
