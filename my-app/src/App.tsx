@@ -9,6 +9,7 @@ import CampaignDetailsPage from './pages/Go_Furnish_Me/CampaignDetailsPage';
 import GoFurnishMePage from './pages/Go_Furnish_Me/GoFurnishMePage';
 import  Home  from './pages/Home/Home';
 import AdminPage from './pages/AdminPage';
+import ChatbotPage from './pages/ChatbotPage';
 import RootLayout from './components/RootLayout';
 import AboutUs from './pages/Home/About_us';
 import './output.css';
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/listings" element={<ProductListing />} />
                 <Route path="/listings/:id" element={<ProductDetail />} />
                 <Route path="/admin" element={<AdminPage />} />
+                <Route path="/chatbot" element={<ChatbotPage />} />
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/FAQ" element={<FAQ />} />
