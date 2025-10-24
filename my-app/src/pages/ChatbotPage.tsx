@@ -18,13 +18,28 @@ import {
   SearchOutlined,
   MessageOutlined
 } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import './ChatbotPage.css';
+
+interface imageProps {
+  thumbnailUrl: string;
+  url: string;
+}
 
 interface Listing {
   id: string;
   title: string;
   price?: number;
+  freePrice?: number;
+  images?: imageProps[];
   imageUrl?: string;
+  image?: string;
+  image_url?: string;
+  img?: string;
+  photo?: string;
+  description?: string;
+  category?: string;
+  condition?: string;
 }
 
 interface SearchResponse {
@@ -40,6 +55,7 @@ const { Content } = Layout;
 const { Search } = Input;
 
 const ChatbotPage: React.FC = () => {
+  const navigate = useNavigate();
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState<Array<{id: number, text: string, isUser: boolean, data?: any}>>([]);
   const [loading, setLoading] = useState(false);
@@ -52,6 +68,10 @@ const ChatbotPage: React.FC = () => {
         `https://us-central1-gutter-bc42f.cloudfunctions.net/apiSearchByTitle?${params}`
       );
       const data: SearchResponse = await response.json();
+      
+      // Debug: Log the API response to see the actual data structure
+      console.log('API Response:', data);
+      console.log('Listings:', data.data?.listings);
       
       // Add user message
       const userMessage = {
@@ -158,28 +178,125 @@ const ChatbotPage: React.FC = () => {
                     <Card
                       size="small"
                       hoverable
-                      cover={item.imageUrl ? (
-                        <img
-                          alt={item.title}
-                          src={item.imageUrl}
-                          style={{ height: 120, objectFit: 'cover' }}
-                        />
-                      ) : null}
-                    >
-                      <Card.Meta
-                        title={
-                          <Text ellipsis={{ tooltip: item.title }}>
-                            {item.title}
-                          </Text>
+                      onClick={() => navigate(`/listings/${item.id}`)}
+                      style={{ 
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        border: '1px solid #f0f0f0',
+                        height: '100%'
+                      }}
+                      cover={(() => {
+                        // Try multiple possible image field names, prioritizing the images array
+                        let imageUrl = null;
+                        
+                        // First try the images array (most likely structure)
+                        if (item.images && item.images.length > 0) {
+                          imageUrl = item.images[0].url || item.images[0].thumbnailUrl;
                         }
-                        description={
-                          item.price ? (
-                            <Text strong style={{ color: '#ff6f73' }}>
+                        
+                        // Fallback to other possible field names
+                        if (!imageUrl) {
+                          imageUrl = item.imageUrl || item.image || item.image_url || item.img || item.photo;
+                        }
+                        
+                        return imageUrl ? (
+                          <img
+                            alt={item.title}
+                            src={imageUrl}
+                            style={{ 
+                              height: 150, 
+                              objectFit: 'cover',
+                              borderRadius: '8px 8px 0 0'
+                            }}
+                            onError={(e) => {
+                              // If image fails to load, hide the image and show placeholder
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                        <div style={{
+                          height: 150,
+                          background: 'linear-gradient(135deg, #ff6f73 0%, #ff4757 100%)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          borderRadius: '8px 8px 0 0'
+                        }}>
+                          <Text style={{ color: '#fff', fontSize: 16 }}>
+                            No Image
+                          </Text>
+                        </div>
+                        );
+                      })()}
+                    >
+                      <div style={{ padding: '8px 0' }}>
+                        <Text 
+                          strong 
+                          style={{ 
+                            fontSize: 14,
+                            display: 'block',
+                            marginBottom: 8,
+                            color: '#333'
+                          }}
+                          ellipsis={{ tooltip: item.title }}
+                        >
+                          {item.title}
+                        </Text>
+                        
+                        {item.description && (
+                          <Text 
+                            style={{ 
+                              fontSize: 12,
+                              color: '#666',
+                              display: 'block',
+                              marginBottom: 8,
+                              lineHeight: 1.4
+                            }}
+                            ellipsis={{ tooltip: item.description }}
+                          >
+                            {item.description}
+                          </Text>
+                        )}
+                        
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
+                          {item.freePrice !== undefined ? (
+                            <Text strong style={{ color: '#52c41a', fontSize: 14 }}>
+                              Free
+                            </Text>
+                          ) : item.price ? (
+                            <Text strong style={{ color: '#ff6f73', fontSize: 16 }}>
                               ${item.price}
                             </Text>
-                          ) : null
-                        }
-                      />
+                          ) : (
+                            <Text strong style={{ color: '#52c41a', fontSize: 14 }}>
+                              Free
+                            </Text>
+                          )}
+                          
+                          {item.condition && (
+                            <Tag 
+                              color="blue" 
+                              style={{ fontSize: 10 }}
+                            >
+                              {item.condition}
+                            </Tag>
+                          )}
+                        </div>
+                        
+                        {item.category && (
+                          <Tag 
+                            color="default" 
+                            style={{ 
+                              fontSize: 10, 
+                              marginTop: 4,
+                              background: '#f0f0f0',
+                              color: '#666'
+                            }}
+                          >
+                            {item.category}
+                          </Tag>
+                        )}
+                      </div>
                     </Card>
                   </Col>
                 ))}
